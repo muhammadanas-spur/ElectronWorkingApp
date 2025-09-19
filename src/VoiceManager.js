@@ -404,7 +404,7 @@ class VoiceManager extends EventEmitter {
   setupTopicAnalyzerEvents() {
     if (this.topicAnalyzer) {
       this.topicAnalyzer.on('topic-updated', (topic) => {
-        this.log('Conversation topic updated', topic.description.substring(0, 100) + '...');
+        this.log('Conversation topic updated', topic.topic.substring(0, 50) + '...');
         this.notifyRenderer('topic-updated', topic);
       });
       

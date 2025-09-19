@@ -45,6 +45,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // QUICK FIX: Transcript configuration for duplicate filtering
   updateTranscriptConfig: (config) => ipcRenderer.invoke('update-transcript-config', config),
   
+  // Topic analysis
+  getCurrentTopic: () => ipcRenderer.invoke('get-current-topic'),
+  getTopicStatus: () => ipcRenderer.invoke('get-topic-status'),
+  analyzeTopicManually: () => ipcRenderer.invoke('analyze-topic-manually'),
+  
   // Status queries
   getWindowStats: () => ipcRenderer.invoke('get-window-stats'),
   isVisible: () => ipcRenderer.invoke('is-visible'),
@@ -90,6 +95,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   onFinalTranscript: (callback) => {
     ipcRenderer.on('final-transcript', (event, transcript) => callback(transcript));
+  },
+
+  // Topic analysis event listeners
+  onTopicUpdated: (callback) => {
+    ipcRenderer.on('topic-updated', (event, topic) => callback(topic));
+  },
+
+  onTopicFileUpdated: (callback) => {
+    ipcRenderer.on('topic-file-updated', (event, data) => callback(data));
   },
   
   // Remove event listeners

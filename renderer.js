@@ -44,8 +44,19 @@ class OverlayRenderer {
       infoButton: document.getElementById('infoButton'),
       statusDot: document.getElementById('statusDot'),
       shortcutsTooltip: document.getElementById('shortcutsTooltip'),
-      overlayContainer: document.getElementById('overlayContainer')
+      overlayContainer: document.getElementById('overlayContainer'),
+      insightsPanel: document.getElementById('insightsPanel'),
+      insightsToggle: document.getElementById('insightsToggle'),
+      insightsContent: document.getElementById('insightsContent'),
+      insightsTopic: document.getElementById('insightsTopic'),
+      insightsKeypoints: document.getElementById('insightsKeypoints'),
+      insightsActions: document.getElementById('insightsActions')
     };
+
+    // Insights panel state
+    this.insightsVisible = false;
+    this.insightsCollapsed = false;
+    this.currentInsights = null;
   }
 
   setupEventListeners() {
@@ -81,6 +92,12 @@ class OverlayRenderer {
           !this.elements.shortcutsTooltip.contains(e.target)) {
         this.hideTooltip();
       }
+    });
+
+    // Insights panel toggle
+    this.elements.insightsToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.toggleInsightsPanel();
     });
 
     // Listen for interaction mode changes from main process
@@ -512,6 +529,15 @@ class OverlayRenderer {
     window.electronAPI.onFinalTranscript((transcript) => {
       this.handleFinalTranscript(transcript);
     });
+
+    // Topic analysis events
+    window.electronAPI.onTopicUpdated((topic) => {
+      this.handleTopicUpdated(topic);
+    });
+
+    window.electronAPI.onTopicFileUpdated((data) => {
+      console.log('Topic file updated:', data.file);
+    });
   }
 
   /**
@@ -581,6 +607,153 @@ class OverlayRenderer {
       console.error('Failed to get voice recording status:', error);
     }
     return { available: false, isRecording: false };
+  }
+
+  /**
+   * Toggle insights panel visibility
+   */
+  toggleInsightsPanel() {
+    this.insightsCollapsed = !this.insightsCollapsed;
+    
+    if (this.insightsCollapsed) {
+      this.elements.insightsContent.classList.add('collapsed');
+      this.elements.insightsToggle.classList.add('collapsed');
+    } else {
+      this.elements.insightsContent.classList.remove('collapsed');
+      this.elements.insightsToggle.classList.remove('collapsed');
+    }
+    
+    // Auto-resize window after toggle
+    setTimeout(() => {
+      this.autoResizeWindow();
+    }, 300);
+  }
+
+  /**
+   * Show insights panel
+   */
+  showInsightsPanel() {
+    if (!this.insightsVisible) {
+      this.insightsVisible = true;
+      this.elements.insightsPanel.classList.add('show');
+      setTimeout(() => {
+        this.autoResizeWindow();
+      }, 300);
+    }
+  }
+
+  /**
+   * Hide insights panel
+   */
+  hideInsightsPanel() {
+    if (this.insightsVisible) {
+      this.insightsVisible = false;
+      this.elements.insightsPanel.classList.remove('show');
+      setTimeout(() => {
+        this.autoResizeWindow();
+      }, 300);
+    }
+  }
+
+  /**
+   * Handle topic updates from main process
+   */
+  handleTopicUpdated(topic) {
+    console.log('Topic updated:', topic);
+    this.currentInsights = topic;
+    this.updateInsightsPanel(topic);
+    this.showInsightsPanel();
+  }
+
+  /**
+   * Update insights panel with new data
+   */
+  updateInsightsPanel(insights) {
+    if (!insights) return;
+
+    // Update topic
+    this.elements.insightsTopic.textContent = insights.topic || 'Conversation in progress';
+
+    // Update key points
+    this.elements.insightsKeypoints.innerHTML = '';
+    if (insights.keyPoints && insights.keyPoints.length > 0) {
+      insights.keyPoints.forEach(point => {
+        const pointElement = document.createElement('div');
+        pointElement.className = 'keypoint-item';
+        pointElement.innerHTML = `
+          <div class="keypoint-bullet"></div>
+          <span>${point}</span>
+        `;
+        this.elements.insightsKeypoints.appendChild(pointElement);
+      });
+    }
+
+    // Update actions
+    this.elements.insightsActions.innerHTML = '';
+    if (insights.actions && insights.actions.length > 0) {
+      insights.actions.forEach((action, index) => {
+        const actionElement = document.createElement('div');
+        actionElement.className = 'action-item';
+        actionElement.innerHTML = `
+          <i class="action-icon fas fa-${this.getActionIcon(index)}"></i>
+          <span>${action}</span>
+        `;
+        this.elements.insightsActions.appendChild(actionElement);
+      });
+    }
+
+    // Show loading state briefly for visual feedback
+    this.showInsightsLoading();
+    setTimeout(() => {
+      this.hideInsightsLoading();
+    }, 500);
+  }
+
+  /**
+   * Get appropriate icon for action based on index
+   */
+  getActionIcon(index) {
+    const icons = ['clipboard-check', 'comment-dots', 'arrow-right', 'lightbulb'];
+    return icons[index % icons.length];
+  }
+
+  /**
+   * Show loading state in insights panel
+   */
+  showInsightsLoading() {
+    const loadingElement = document.createElement('div');
+    loadingElement.className = 'insights-loading';
+    loadingElement.id = 'insightsLoading';
+    loadingElement.innerHTML = `
+      <div class="loading-spinner"></div>
+      <span>Analyzing conversation...</span>
+    `;
+    
+    if (this.elements.insightsContent) {
+      this.elements.insightsContent.appendChild(loadingElement);
+    }
+  }
+
+  /**
+   * Hide loading state in insights panel
+   */
+  hideInsightsLoading() {
+    const loadingElement = document.getElementById('insightsLoading');
+    if (loadingElement) {
+      loadingElement.remove();
+    }
+  }
+
+  /**
+   * Show empty state when no insights available
+   */
+  showInsightsEmpty() {
+    this.elements.insightsContent.innerHTML = `
+      <div class="insights-empty">
+        <i class="fas fa-comments"></i>
+        <div>Start a conversation to see live insights</div>
+      </div>
+    `;
   }
 
   /**

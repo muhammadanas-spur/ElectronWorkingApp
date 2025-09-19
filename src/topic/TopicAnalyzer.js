@@ -126,23 +126,25 @@ class TopicAnalyzer extends EventEmitter {
       // Format transcripts for analysis
       const conversationText = this.formatTranscriptsForAnalysis(recentTranscripts);
       
-      // Generate topic description using OpenAI
-      const topicDescription = await this.generateTopicDescription(conversationText);
+      // Generate structured insights using OpenAI
+      const insights = await this.generateTopicDescription(conversationText);
       
-      if (topicDescription) {
+      if (insights) {
         // Check if topic has significantly changed
-        const hasTopicChanged = await this.hasTopicChanged(topicDescription);
+        const hasTopicChanged = await this.hasTopicChanged(insights.topic);
         
         if (hasTopicChanged || !this.currentTopic) {
           this.currentTopic = {
-            description: topicDescription,
+            topic: insights.topic,
+            keyPoints: insights.keyPoints,
+            actions: insights.actions,
             timestamp: Date.now(),
-            confidence: 0.8, // You could implement confidence scoring
+            confidence: 0.8,
             transcriptCount: transcripts.length
           };
           
-          // Update the topic file
-          await this.updateTopicFile(topicDescription);
+          // Update the topic file (for backup)
+          await this.updateTopicFile(insights.topic);
           
           // Add to topic history
           this.topicHistory.push(this.currentTopic);
@@ -152,15 +154,17 @@ class TopicAnalyzer extends EventEmitter {
             this.topicHistory.shift();
           }
           
-          this.log('Topic updated', { 
-            description: topicDescription.substring(0, 100) + '...',
+          this.log('Insights updated', { 
+            topic: insights.topic.substring(0, 50) + '...',
+            keyPoints: insights.keyPoints.length,
+            actions: insights.actions.length,
             hasChanged: hasTopicChanged
           });
           
           this.emit('topic-updated', this.currentTopic);
           return this.currentTopic;
         } else {
-          this.log('Topic has not significantly changed, keeping current topic');
+          this.log('Topic has not significantly changed, keeping current insights');
         }
       }
       
@@ -197,7 +201,7 @@ class TopicAnalyzer extends EventEmitter {
   }
 
   /**
-   * Generate topic description using OpenAI API
+   * Generate structured insights using OpenAI API
    */
   async generateTopicDescription(conversationText) {
     try {
@@ -206,16 +210,21 @@ class TopicAnalyzer extends EventEmitter {
         messages: [
           {
             role: 'system',
-            content: 'You are an expert conversation analyst. Your job is to identify and describe the current topic of conversation based on recent dialogue. Provide clear, concise, and specific topic descriptions that capture the essence of what is being discussed. Keep responses under 100 words and make them specific and actionable.'
+            content: 'You are an expert conversation analyst. Analyze conversations and provide structured insights in clean JSON format. Always return valid JSON only, no markdown or explanations. The JSON should have: "topic" (brief main subject, max 80 chars), "keyPoints" (array of 2-4 key discussion points), and "actions" (array of 2-4 suggested follow-up actions).'
           },
           {
             role: 'user',
-            content: `Analyze the following conversation transcript and provide a concise description of the current topic being discussed. Focus on the main subject matter and key themes.
+            content: `Analyze this conversation and return ONLY valid JSON:
 
 Conversation:
 ${conversationText}
 
-Current Topic Description:`
+Required JSON format (return only this, no other text):
+{
+  "topic": "Brief main topic being discussed",
+  "keyPoints": ["Key point 1", "Key point 2", "Key point 3"],
+  "actions": ["Suggested action 1", "Suggested action 2", "Suggested action 3"]
+}`
           }
         ],
         max_tokens: this.config.maxTokens,
@@ -225,20 +234,56 @@ Current Topic Description:`
         presence_penalty: 0
       });
 
-      const topicDescription = response.choices[0]?.message?.content?.trim();
+      const content = response.choices[0]?.message?.content?.trim();
       
-      if (!topicDescription) {
-        throw new Error('No topic description generated');
+      if (!content) {
+        throw new Error('No insights generated');
       }
 
-      this.log('Generated topic description', { 
-        length: topicDescription.length,
-        preview: topicDescription.substring(0, 50) + '...'
+      // Try to parse JSON response
+      let insights;
+      try {
+        // Clean up the content - sometimes AI adds markdown formatting
+        let cleanContent = content.trim();
+        if (cleanContent.startsWith('```json')) {
+          cleanContent = cleanContent.replace(/```json\s*/, '').replace(/```\s*$/, '');
+        }
+        if (cleanContent.startsWith('```')) {
+          cleanContent = cleanContent.replace(/```\s*/, '').replace(/```\s*$/, '');
+        }
+        
+        insights = JSON.parse(cleanContent);
+        this.log('Successfully parsed JSON insights');
+      } catch (parseError) {
+        this.log('JSON parsing failed, creating fallback insights', parseError.message);
+        // Fallback to simple topic if JSON parsing fails
+        insights = {
+          topic: content.length > 100 ? content.substring(0, 100) + '...' : content,
+          keyPoints: [`Discussion about: ${content.substring(0, 80)}...`],
+          actions: ['Continue the conversation', 'Ask follow-up questions']
+        };
+      }
+
+      // Ensure structure is correct and clean
+      const structuredInsights = {
+        topic: (insights.topic || 'Conversation in progress').trim(),
+        keyPoints: Array.isArray(insights.keyPoints) ? 
+          insights.keyPoints.slice(0, 4).map(point => point.trim()) : 
+          ['Analyzing conversation topics...'],
+        actions: Array.isArray(insights.actions) ? 
+          insights.actions.slice(0, 4).map(action => action.trim()) : 
+          ['Continue the discussion']
+      };
+
+      this.log('Generated structured insights', { 
+        topic: structuredInsights.topic.substring(0, 50) + '...',
+        keyPointsCount: structuredInsights.keyPoints.length,
+        actionsCount: structuredInsights.actions.length
       });
 
-      return topicDescription;
+      return structuredInsights;
     } catch (error) {
-      this.log('Error generating topic description', error);
+      this.log('Error generating insights', error);
       throw error;
     }
   }
@@ -252,6 +297,9 @@ Current Topic Description:`
     }
 
     try {
+      // Get the previous topic text for comparison
+      const previousTopic = this.currentTopic.topic || this.currentTopic.description || 'No previous topic';
+      
       // Use OpenAI to compare topics for similarity
       const response = await this.openai.chat.completions.create({
         model: this.config.model,
@@ -264,7 +312,7 @@ Current Topic Description:`
             role: 'user',
             content: `Compare these two conversation topic descriptions and determine if they represent significantly different topics. Respond with only "YES" if they are different topics, or "NO" if they are the same or very similar topic.
 
-Previous Topic: ${this.currentTopic.description}
+Previous Topic: ${previousTopic}
 
 New Topic: ${newTopicDescription}
 
@@ -281,7 +329,7 @@ Are these different topics?`
       this.log('Topic change analysis', { 
         result, 
         hasChanged,
-        previous: this.currentTopic.description.substring(0, 50) + '...',
+        previous: previousTopic.substring(0, 50) + '...',
         new: newTopicDescription.substring(0, 50) + '...'
       });
       
