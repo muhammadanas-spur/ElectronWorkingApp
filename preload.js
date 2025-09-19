@@ -97,6 +97,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.on('final-transcript', (event, transcript) => callback(transcript));
   },
 
+  // Knowledge base queries
+  queryKnowledgeBase: (question, context) => ipcRenderer.invoke('query-knowledge-base', { question, context }),
+
   // Topic analysis event listeners
   onTopicUpdated: (callback) => {
     ipcRenderer.on('topic-updated', (event, topic) => callback(topic));

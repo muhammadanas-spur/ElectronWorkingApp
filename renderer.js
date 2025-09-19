@@ -50,13 +50,20 @@ class OverlayRenderer {
       insightsContent: document.getElementById('insightsContent'),
       insightsTopic: document.getElementById('insightsTopic'),
       insightsKeypoints: document.getElementById('insightsKeypoints'),
-      insightsActions: document.getElementById('insightsActions')
+      questionActions: document.getElementById('questionActions'),
+      taskActions: document.getElementById('taskActions'),
+      knowledgePane: document.getElementById('knowledgePane'),
+      knowledgeContent: document.getElementById('knowledgeContent'),
+      knowledgeClose: document.getElementById('knowledgeClose'),
+      knowledgeCopy: document.getElementById('knowledgeCopy')
     };
 
     // Insights panel state
     this.insightsVisible = false;
     this.insightsCollapsed = false;
     this.currentInsights = null;
+    this.dismissedActions = new Set();
+    this.knowledgePaneVisible = false;
   }
 
   setupEventListeners() {
@@ -98,6 +105,15 @@ class OverlayRenderer {
     this.elements.insightsToggle.addEventListener('click', (e) => {
       e.stopPropagation();
       this.toggleInsightsPanel();
+    });
+
+    // Knowledge pane controls
+    this.elements.knowledgeClose.addEventListener('click', () => {
+      this.hideKnowledgePane();
+    });
+
+    this.elements.knowledgeCopy.addEventListener('click', () => {
+      this.copyKnowledgeAnswer();
     });
 
     // Listen for interaction mode changes from main process
@@ -375,6 +391,7 @@ class OverlayRenderer {
         const container = this.elements.overlayContainer;
         const tooltip = this.elements.shortcutsTooltip;
         const insightsPanel = this.elements.insightsPanel;
+        const knowledgePane = this.elements.knowledgePane;
         
         // Base dimensions from main container
         let width = container.scrollWidth || container.offsetWidth;
@@ -393,6 +410,17 @@ class OverlayRenderer {
             insightsHeight, 
             totalWidth: width, 
             totalHeight: height 
+          });
+        }
+        
+        // If knowledge pane is visible, add space for side-by-side layout
+        if (this.knowledgePaneVisible && knowledgePane && knowledgePane.classList.contains('show')) {
+          const knowledgeWidth = knowledgePane.offsetWidth || 380;
+          width += knowledgeWidth + 40; // Add knowledge pane width plus margin
+          
+          console.log('Auto-resize with knowledge pane:', { 
+            knowledgeWidth, 
+            totalWidth: width 
           });
         }
         
@@ -715,17 +743,27 @@ class OverlayRenderer {
       });
     }
 
-    // Update actions
-    this.elements.insightsActions.innerHTML = '';
-    if (insights.actions && insights.actions.length > 0) {
-      insights.actions.forEach((action, index) => {
-        const actionElement = document.createElement('div');
-        actionElement.className = 'action-item';
-        actionElement.innerHTML = `
-          <i class="action-icon fas fa-${this.getActionIcon(index)}"></i>
-          <span>${action}</span>
-        `;
-        this.elements.insightsActions.appendChild(actionElement);
+    // Update question actions
+    this.elements.questionActions.innerHTML = '';
+    if (insights.questionActions && insights.questionActions.length > 0) {
+      insights.questionActions.forEach((question, index) => {
+        const questionId = `question-${Date.now()}-${index}`;
+        if (!this.dismissedActions.has(questionId)) {
+          const questionElement = this.createQuestionActionElement(question, questionId);
+          this.elements.questionActions.appendChild(questionElement);
+        }
+      });
+    }
+
+    // Update task actions
+    this.elements.taskActions.innerHTML = '';
+    if (insights.taskActions && insights.taskActions.length > 0) {
+      insights.taskActions.forEach((task, index) => {
+        const taskId = `task-${Date.now()}-${index}`;
+        if (!this.dismissedActions.has(taskId)) {
+          const taskElement = this.createTaskActionElement(task, taskId);
+          this.elements.taskActions.appendChild(taskElement);
+        }
       });
     }
 
@@ -737,11 +775,238 @@ class OverlayRenderer {
   }
 
   /**
-   * Get appropriate icon for action based on index
+   * Create question action element
    */
-  getActionIcon(index) {
-    const icons = ['clipboard-check', 'comment-dots', 'arrow-right', 'lightbulb'];
-    return icons[index % icons.length];
+  createQuestionActionElement(question, questionId) {
+    const questionElement = document.createElement('div');
+    questionElement.className = 'action-item question-action-item';
+    questionElement.innerHTML = `
+      <div class="action-content">
+        <div class="action-text">${question}</div>
+        <div class="action-type">Question</div>
+      </div>
+      <div class="action-dismiss">
+        <button class="dismiss-btn tick" data-action="complete" data-id="${questionId}" title="Mark as handled">
+          <i class="fas fa-check"></i>
+        </button>
+        <button class="dismiss-btn cross" data-action="dismiss" data-id="${questionId}" title="Dismiss">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    `;
+
+    // Add click handler for main question area
+    questionElement.addEventListener('click', (e) => {
+      if (!e.target.closest('.action-dismiss')) {
+        this.handleQuestionClick(question);
+      }
+    });
+
+    // Add dismiss handlers
+    questionElement.querySelectorAll('.dismiss-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.handleActionDismiss(questionId, e.target.closest('.dismiss-btn').dataset.action);
+      });
+    });
+
+    return questionElement;
+  }
+
+  /**
+   * Create task action element
+   */
+  createTaskActionElement(task, taskId) {
+    const taskElement = document.createElement('div');
+    taskElement.className = 'action-item task-action-item';
+    
+    const taskType = this.getTaskType(task);
+    taskElement.innerHTML = `
+      <div class="action-content">
+        <div class="action-text">${task}</div>
+        <div class="action-type">${taskType}</div>
+      </div>
+      <div class="action-dismiss">
+        <button class="dismiss-btn tick" data-action="complete" data-id="${taskId}" title="Mark as completed">
+          <i class="fas fa-check"></i>
+        </button>
+        <button class="dismiss-btn cross" data-action="dismiss" data-id="${taskId}" title="Dismiss">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    `;
+
+    // Add click handler for main task area (placeholder for future functionality)
+    taskElement.addEventListener('click', (e) => {
+      if (!e.target.closest('.action-dismiss')) {
+        this.handleTaskClick(task, taskType);
+      }
+    });
+
+    // Add dismiss handlers
+    taskElement.querySelectorAll('.dismiss-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.handleActionDismiss(taskId, e.target.closest('.dismiss-btn').dataset.action);
+      });
+    });
+
+    return taskElement;
+  }
+
+  /**
+   * Get task type from task text
+   */
+  getTaskType(task) {
+    const lowerTask = task.toLowerCase();
+    if (lowerTask.includes('jira') || lowerTask.includes('ticket')) {
+      return 'Jira Ticket';
+    } else if (lowerTask.includes('email') || lowerTask.includes('send')) {
+      return 'Email';
+    }
+    return 'Task';
+  }
+
+  /**
+   * Handle question action click - show knowledge base answer
+   */
+  async handleQuestionClick(question) {
+    this.showKnowledgePane();
+    this.showKnowledgeLoading();
+
+    try {
+      // Request knowledge base answer from main process
+      const response = await window.electronAPI.queryKnowledgeBase(question, this.getConversationContext());
+      this.showKnowledgeAnswer(response);
+    } catch (error) {
+      console.error('Error querying knowledge base:', error);
+      this.showKnowledgeError('Failed to get answer from knowledge base.');
+    }
+  }
+
+  /**
+   * Handle task action click (placeholder for future functionality)
+   */
+  handleTaskClick(task, taskType) {
+    console.log(`Task clicked: ${task} (${taskType})`);
+    // TODO: Implement task functionality (Jira integration, email composition, etc.)
+  }
+
+  /**
+   * Handle action dismiss
+   */
+  handleActionDismiss(actionId, action) {
+    this.dismissedActions.add(actionId);
+    
+    // Remove the element from DOM
+    const element = document.querySelector(`[data-id="${actionId}"]`)?.closest('.action-item');
+    if (element) {
+      element.style.opacity = '0';
+      element.style.transform = 'translateX(-10px)';
+      setTimeout(() => {
+        element.remove();
+      }, 200);
+    }
+
+    console.log(`Action ${action}: ${actionId}`);
+  }
+
+  /**
+   * Get conversation context for knowledge base queries
+   */
+  getConversationContext() {
+    // Get recent transcripts as context
+    const recentTranscripts = this.transcripts.slice(-5);
+    return recentTranscripts.map(t => `${t.speaker}: ${t.text}`).join('\n');
+  }
+
+  /**
+   * Show knowledge pane
+   */
+  showKnowledgePane() {
+    this.knowledgePaneVisible = true;
+    this.elements.knowledgePane.classList.add('show');
+    this.elements.container.classList.add('knowledge-open');
+    
+    // Auto-resize to accommodate both panes
+    setTimeout(() => {
+      this.autoResizeWindow();
+    }, 100);
+  }
+
+  /**
+   * Hide knowledge pane
+   */
+  hideKnowledgePane() {
+    this.knowledgePaneVisible = false;
+    this.elements.knowledgePane.classList.remove('show');
+    this.elements.container.classList.remove('knowledge-open');
+    
+    // Auto-resize back to normal
+    setTimeout(() => {
+      this.autoResizeWindow();
+    }, 100);
+  }
+
+  /**
+   * Show knowledge loading state
+   */
+  showKnowledgeLoading() {
+    this.elements.knowledgeContent.innerHTML = `
+      <div class="knowledge-loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        Looking up answer...
+      </div>
+    `;
+  }
+
+  /**
+   * Show knowledge base answer
+   */
+  showKnowledgeAnswer(answer) {
+    this.elements.knowledgeContent.innerHTML = `
+      <div class="knowledge-answer">${answer}</div>
+    `;
+    this.currentKnowledgeAnswer = answer;
+  }
+
+  /**
+   * Show knowledge error
+   */
+  showKnowledgeError(error) {
+    this.elements.knowledgeContent.innerHTML = `
+      <div class="knowledge-error">
+        <i class="fas fa-exclamation-triangle"></i>
+        ${error}
+      </div>
+    `;
+  }
+
+  /**
+   * Copy knowledge answer to clipboard
+   */
+  async copyKnowledgeAnswer() {
+    if (this.currentKnowledgeAnswer) {
+      try {
+        await navigator.clipboard.writeText(this.currentKnowledgeAnswer);
+        
+        // Show feedback
+        const originalText = this.elements.knowledgeCopy.innerHTML;
+        this.elements.knowledgeCopy.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        this.elements.knowledgeCopy.style.background = 'rgba(34, 197, 94, 0.15)';
+        this.elements.knowledgeCopy.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+        this.elements.knowledgeCopy.style.color = '#22c55e';
+        
+        setTimeout(() => {
+          this.elements.knowledgeCopy.innerHTML = originalText;
+          this.elements.knowledgeCopy.style.background = '';
+          this.elements.knowledgeCopy.style.borderColor = '';
+          this.elements.knowledgeCopy.style.color = '';
+        }, 2000);
+      } catch (error) {
+        console.error('Failed to copy to clipboard:', error);
+      }
+    }
   }
 
   /**

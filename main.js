@@ -1,5 +1,6 @@
 const { app, BrowserWindow, globalShortcut, screen, ipcMain, desktopCapturer } = require('electron');
 const path = require('path');
+const fs = require('fs').promises;
 const winston = require('winston');
 const VoiceManager = require('./src/VoiceManager');
 
@@ -37,6 +38,9 @@ class OverlayApplication {
     // Voice functionality
     this.voiceManager = null;
     this.voiceInitialized = false;
+    
+    // Knowledge base
+    this.knowledgeBase = null;
 
     this.setupEventHandlers();
   }
@@ -312,6 +316,9 @@ class OverlayApplication {
     ipcMain.handle('get-recent-transcripts', (event, count) => this.getRecentTranscripts(count));
     ipcMain.handle('search-transcripts', (event, query, options) => this.searchTranscripts(query, options));
     ipcMain.handle('export-session', (event, format) => this.exportSession(format));
+    
+    // Knowledge base queries
+    ipcMain.handle('query-knowledge-base', (event, { question, context }) => this.queryKnowledgeBase(question, context));
     
     // QUICK FIX: Transcript configuration for duplicate filtering
     ipcMain.handle('update-transcript-config', (event, config) => this.updateTranscriptConfig(config));
@@ -1044,6 +1051,48 @@ class OverlayApplication {
   
   isInScreenSharingMode() {
     return this.isScreenBeingShared;
+  }
+
+  /**
+   * Load knowledge base from file
+   */
+  async loadKnowledgeBase() {
+    try {
+      const knowledgeBasePath = path.join(__dirname, 'knowledgebase.md');
+      this.knowledgeBase = await fs.readFile(knowledgeBasePath, 'utf8');
+      logger.info('Knowledge base loaded successfully');
+    } catch (error) {
+      logger.error('Failed to load knowledge base:', error);
+      this.knowledgeBase = 'Knowledge base not available.';
+    }
+  }
+
+  /**
+   * Query knowledge base with customer question
+   */
+  async queryKnowledgeBase(question, context) {
+    try {
+      // Load knowledge base if not already loaded
+      if (!this.knowledgeBase) {
+        await this.loadKnowledgeBase();
+      }
+
+      if (!this.voiceManager || !this.voiceManager.topicAnalyzer) {
+        throw new Error('Topic analyzer not available');
+      }
+
+      // Use the topic analyzer to query the knowledge base
+      const answer = await this.voiceManager.topicAnalyzer.queryKnowledgeBase(
+        question,
+        context || '',
+        this.knowledgeBase
+      );
+
+      return answer;
+    } catch (error) {
+      logger.error('Error querying knowledge base:', error);
+      throw new Error('Failed to query knowledge base');
+    }
   }
 }
 

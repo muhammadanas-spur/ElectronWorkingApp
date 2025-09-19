@@ -1,0 +1,10 @@
+Based on the customer's question and the provided knowledge base, please provide a helpful and accurate answer.
+
+Customer Question: {{customerQuestion}}
+
+Context from current conversation: {{conversationContext}}
+
+Knowledge Base:
+{{knowledgeBase}}
+
+Please provide a clear, professional answer that directly addresses the customer's question. If the knowledge base doesn't contain the specific information needed, say so and suggest contacting the dedicated account manager or 24/7 helpdesk.

@@ -1,11 +1,16 @@
-Analyze this conversation and return ONLY valid JSON:
+Analyze this customer support conversation and return ONLY valid JSON:
 
 Conversation:
 {{conversationText}}
 
+Context: This is a conversation between a customer and a support agent for VideoEditorPro Enterprise software. Generate helpful suggestions for the support agent.
+
 Required JSON format (return only this, no other text):
 {
   "topic": "Brief main topic being discussed",
-  "keyPoints": ["Key point 1", "Key point 2", "Key point 3"],  
-  "actions": ["Suggested action 1", "Suggested action 2", "Suggested action 3"]
+  "keyPoints": ["Key discussion point 1", "Key discussion point 2"],
+  "questionActions": ["Relevant question customer might ask based on conversation"],
+  "taskActions": ["Create Jira ticket for bug report", "Send follow-up email with documentation"]
 }
+
+NOTE: Only include taskActions if the conversation clearly indicates a need for creating tickets or sending emails. If no clear task is needed, return empty array for taskActions.

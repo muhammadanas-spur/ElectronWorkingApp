@@ -141,7 +141,8 @@ class TopicAnalyzer extends EventEmitter {
           this.currentTopic = {
             topic: insights.topic,
             keyPoints: insights.keyPoints,
-            actions: insights.actions,
+            questionActions: insights.questionActions,
+            taskActions: insights.taskActions,
             timestamp: Date.now(),
             confidence: 0.8,
             transcriptCount: transcripts.length
@@ -161,7 +162,8 @@ class TopicAnalyzer extends EventEmitter {
           this.log('Insights updated', { 
             topic: insights.topic.substring(0, 50) + '...',
             keyPoints: insights.keyPoints.length,
-            actions: insights.actions.length,
+            questionActions: insights.questionActions.length,
+            taskActions: insights.taskActions.length,
             hasChanged: hasTopicChanged
           });
           
@@ -257,7 +259,8 @@ class TopicAnalyzer extends EventEmitter {
         insights = {
           topic: content.length > 100 ? content.substring(0, 100) + '...' : content,
           keyPoints: [`Discussion about: ${content.substring(0, 80)}...`],
-          actions: ['Continue the conversation', 'Ask follow-up questions']
+          questionActions: ['What features are available?', 'How do I get support?'],
+          taskActions: []
         };
       }
 
@@ -267,15 +270,19 @@ class TopicAnalyzer extends EventEmitter {
         keyPoints: Array.isArray(insights.keyPoints) ? 
           insights.keyPoints.slice(0, 4).map(point => point.trim()) : 
           ['Analyzing conversation topics...'],
-        actions: Array.isArray(insights.actions) ? 
-          insights.actions.slice(0, 4).map(action => action.trim()) : 
-          ['Continue the discussion']
+        questionActions: Array.isArray(insights.questionActions) ? 
+          insights.questionActions.slice(0, 3).map(question => question.trim()) : 
+          [],
+        taskActions: Array.isArray(insights.taskActions) ? 
+          insights.taskActions.slice(0, 2).map(task => task.trim()) : 
+          []
       };
 
       this.log('Generated structured insights', { 
         topic: structuredInsights.topic.substring(0, 50) + '...',
         keyPointsCount: structuredInsights.keyPoints.length,
-        actionsCount: structuredInsights.actions.length
+        questionActionsCount: structuredInsights.questionActions.length,
+        taskActionsCount: structuredInsights.taskActions.length
       });
 
       return structuredInsights;
@@ -431,6 +438,54 @@ Last analysis: ${timestamp}
     if (this.config.debug) {
       const timestamp = new Date().toISOString();
       console.log(`[${timestamp}] TopicAnalyzer: ${message}`, data || '');
+    }
+  }
+
+  /**
+   * Query knowledge base with customer question
+   */
+  async queryKnowledgeBase(customerQuestion, conversationContext, knowledgeBase) {
+    try {
+      this.log('Querying knowledge base', { question: customerQuestion.substring(0, 50) + '...' });
+
+      // Get prompts from PromptManager
+      const prompts = await this.promptManager.getKnowledgeBaseQueryPrompts(
+        customerQuestion,
+        conversationContext,
+        knowledgeBase
+      );
+
+      const response = await this.openai.chat.completions.create({
+        model: this.config.model,
+        messages: [
+          {
+            role: 'system',
+            content: prompts.system
+          },
+          {
+            role: 'user',
+            content: prompts.user
+          }
+        ],
+        max_tokens: 300,
+        temperature: 0.3
+      });
+
+      const answer = response.choices[0]?.message?.content?.trim();
+      
+      if (!answer) {
+        throw new Error('No answer generated');
+      }
+
+      this.log('Knowledge base answer generated', { 
+        answerLength: answer.length,
+        question: customerQuestion.substring(0, 30) + '...'
+      });
+
+      return answer;
+    } catch (error) {
+      this.log('Error querying knowledge base', error);
+      throw error;
     }
   }
 

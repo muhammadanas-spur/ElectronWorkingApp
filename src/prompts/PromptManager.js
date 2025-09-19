@@ -79,6 +79,25 @@ class PromptManager {
   }
 
   /**
+   * Get knowledge base query prompts
+   */
+  async getKnowledgeBaseQueryPrompts(customerQuestion, conversationContext, knowledgeBase) {
+    const systemPrompt = await this.loadPrompt('knowledge-base-query');
+    const userPromptTemplate = await this.loadPrompt('knowledge-base-query-user');
+    
+    const userPrompt = this.replaceTemplateVariables(userPromptTemplate, {
+      customerQuestion: customerQuestion,
+      conversationContext: conversationContext,
+      knowledgeBase: knowledgeBase
+    });
+
+    return {
+      system: systemPrompt,
+      user: userPrompt
+    };
+  }
+
+  /**
    * Clear prompt cache (useful for development/testing)
    */
   clearCache() {
