@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overlay Assistant</title>
+    <link href="./dist/output.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+        
+        body {
+            -webkit-app-region: no-drag;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        .overlay-container {
+            position: relative;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(20, 20, 20, 0.5) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            padding: 0 16px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            font-weight: 600;
+            -webkit-app-region: drag;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            min-width: 300px;
+            max-width: 900px;
+            width: max-content;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: width 0.3s ease;
+        }
+
+        .control-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-app-region: no-drag;
+            flex-shrink: 1;
+            user-select: none;
+        }
+
+        .control-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .control-item:active {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(0);
+        }
+
+        .control-item i {
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .control-item.active {
+            color: #4ade80;
+            text-shadow: 0 1px 2px rgba(74, 222, 128, 0.3);
+        }
+
+        .control-item.active i {
+            text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+        }
+
+        .control-separator {
+            width: 1px;
+            height: 20px;
+            background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.25), transparent);
+            flex-shrink: 0;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .status-dot.interactive {
+            background-color: #10b981;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+            animation: pulse-green 2s infinite;
+        }
+
+        .status-dot.non-interactive {
+            background-color: #ef4444;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+        }
+
+        .status-dot.screen-sharing {
+            background-color: #f59e0b;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.8);
+            animation: pulse-orange 1.5s infinite;
+        }
+
+        .info-button {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: all 0.2s ease;
+        }
+
+        .info-button:hover {
+            background: rgba(96, 165, 250, 0.15);
+            color: #60a5fa;
+            box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.25) inset;
+        }
+
+        .shortcuts-tooltip {
+            position: fixed;
+            top: 60px;
+            right: 10px;
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.95) 0%, rgba(10, 10, 10, 0.9) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            padding: 16px;
+            width: 320px;
+            max-height: 300px;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+            font-size: 11px;
+            overflow: hidden;
+        }
+
+        .shortcuts-tooltip.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .shortcuts-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .shortcut-item:last-child {
+            border-bottom: none;
+        }
+
+        .kbd {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-weight: 600;
+            color: #fff;
+            font-size: 10px;
+            box-shadow: inset 0 -1px 0 rgba(0,0,0,0.25);
+        }
+
+        @keyframes pulse-green {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes pulse-orange {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+                box-shadow: 0 0 12px rgba(245, 158, 11, 0.8);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.15);
+                box-shadow: 0 0 20px rgba(245, 158, 11, 1);
+            }
+        }
+
+        /* Draggable area indicator */
+        .drag-indicator {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            opacity: 0.3;
+            transition: opacity 0.2s ease;
+        }
+
+        .drag-indicator:hover {
+            opacity: 0.6;
+        }
+
+        .drag-dot {
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+        }
+
+        /* Microphone button styling */
+        #micButton {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #micButton:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.3);
+            opacity: 0.8;
+        }
+
+        #micButton i {
+            color: rgba(59, 130, 246, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay-container" id="overlayContainer">
+        <!-- Drag indicator -->
+        <div class="drag-indicator">
+            <div class="drag-dot"></div>
+            <div class="drag-dot"></div>
+            <div class="drag-dot"></div>
+        </div>
+
+        <!-- Visibility toggle -->
+        <div class="control-item" id="visibilityToggle" title="Toggle Visibility (Ctrl+Shift+V)">
+            <i class="fas fa-eye"></i>
+        </div>
+
+        <div class="control-separator"></div>
+
+        <!-- Interaction toggle -->
+        <div class="control-item" id="interactionToggle" title="Toggle Click-through (Ctrl+Shift+I)">
+            <i class="fas fa-hand-pointer"></i>
+        </div>
+
+        <div class="control-separator"></div>
+
+        <!-- Screen sharing toggle (for testing) -->
+        <div class="control-item" id="screenSharingToggle" title="Toggle Screen Sharing Mode (Test)">
+            <i class="fas fa-desktop"></i>
+        </div>
+
+        <div class="control-separator"></div>
+
+        <!-- Microphone button -->
+        <div class="control-item" id="micButton" title="Microphone (Coming Soon)">
+            <i class="fas fa-microphone"></i>
+        </div>
+
+        <div class="control-separator"></div>
+
+        <!-- Settings/Info -->
+        <div class="control-item info-button" id="infoButton" title="Shortcuts & Info">
+            <i class="fas fa-info-circle"></i>
+        </div>
+
+        <div class="control-separator"></div>
+
+        <!-- Status indicator -->
+        <div class="status-dot interactive" id="statusDot"></div>
+    </div>
+
+    <!-- Shortcuts tooltip (moved outside container to prevent overflow) -->
+    <div class="shortcuts-tooltip" id="shortcutsTooltip">
+            <div class="shortcuts-title">
+                <i class="fas fa-keyboard"></i>
+                Keyboard Shortcuts
+            </div>
+            <div class="shortcut-item">
+                <span>Toggle Visibility</span>
+                <div>
+                    <span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">V</span>
+                </div>
+            </div>
+            <div class="shortcut-item">
+                <span>Toggle Click-through</span>
+                <div>
+                    <span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">I</span>
+                </div>
+            </div>
+            <div class="shortcut-item">
+                <span>Alternative Click-through</span>
+                <div>
+                    <span class="kbd">Alt</span> + <span class="kbd">A</span>
+                </div>
+            </div>
+            <div class="shortcut-item">
+                <span>Move Up</span>
+                <div>
+                    <span class="kbd">Ctrl</span> + <span class="kbd">↑</span>
+                </div>
+            </div>
+            <div class="shortcut-item">
+                <span>Move Down</span>
+                <div>
+                    <span class="kbd">Ctrl</span> + <span class="kbd">↓</span>
+                </div>
+            </div>
+            <div class="shortcut-item">
+                <span>Move Left</span>
+                <div>
+                    <span class="kbd">Ctrl</span> + <span class="kbd">←</span>
+                </div>
+            </div>
+            <div class="shortcut-item">
+                <span>Move Right</span>
+                <div>
+                    <span class="kbd">Ctrl</span> + <span class="kbd">→</span>
+                </div>
+            </div>
+            <div class="shortcut-item">
+                <span>Test Screen Share Detection</span>
+                <div>
+                    <span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">D</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

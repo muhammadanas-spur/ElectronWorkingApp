@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom overlay styles */
+.overlay-glassmorphism {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(20, 20, 20, 0.5) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.overlay-button {
+  @apply px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white/90 text-sm font-medium;
+  @apply hover:bg-white/15 hover:border-white/30 transition-all duration-200;
+  @apply backdrop-blur-sm;
+}
+
+.overlay-button:active {
+  @apply bg-white/20 scale-95;
+}
+
+.overlay-separator {
+  @apply w-px h-4 bg-gradient-to-b from-transparent via-white/25 to-transparent;
+}
+
+.status-indicator {
+  @apply w-2 h-2 rounded-full transition-all duration-300;
+}
+
+.status-indicator.interactive {
+  @apply bg-green-400 shadow-lg shadow-green-400/60;
+  animation: pulse-green 2s infinite;
+}
+
+.status-indicator.non-interactive {
+  @apply bg-red-400 shadow-lg shadow-red-400/60;
+}
+
+@keyframes pulse-green {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
