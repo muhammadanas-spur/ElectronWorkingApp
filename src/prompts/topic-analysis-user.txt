@@ -1,0 +1,11 @@
+Analyze this conversation and return ONLY valid JSON:
+
+Conversation:
+{{conversationText}}
+
+Required JSON format (return only this, no other text):
+{
+  "topic": "Brief main topic being discussed",
+  "keyPoints": ["Key point 1", "Key point 2", "Key point 3"],  
+  "actions": ["Suggested action 1", "Suggested action 2", "Suggested action 3"]
+}

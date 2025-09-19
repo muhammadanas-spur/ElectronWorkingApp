@@ -2,6 +2,7 @@ const EventEmitter = require('events');
 const fs = require('fs').promises;
 const path = require('path');
 const OpenAI = require('openai');
+const PromptManager = require('../prompts/PromptManager');
 
 /**
  * TopicAnalyzer - Analyzes conversation transcripts to identify and track current topics
@@ -43,6 +44,9 @@ class TopicAnalyzer extends EventEmitter {
     
     // Topic history for change detection
     this.topicHistory = [];
+    
+    // Initialize prompt manager
+    this.promptManager = new PromptManager();
     
     this.log('TopicAnalyzer initialized', { 
       model: this.config.model,
@@ -205,26 +209,19 @@ class TopicAnalyzer extends EventEmitter {
    */
   async generateTopicDescription(conversationText) {
     try {
+      // Get prompts from PromptManager
+      const prompts = await this.promptManager.getTopicAnalysisPrompts(conversationText);
+      
       const response = await this.openai.chat.completions.create({
         model: this.config.model,
         messages: [
           {
             role: 'system',
-            content: 'You are an expert conversation analyst. Analyze conversations and provide structured insights in clean JSON format. Always return valid JSON only, no markdown or explanations. The JSON should have: "topic" (brief main subject, max 80 chars), "keyPoints" (array of 2-4 key discussion points), and "actions" (array of 2-4 suggested follow-up actions).'
+            content: prompts.system
           },
           {
             role: 'user',
-            content: `Analyze this conversation and return ONLY valid JSON:
-
-Conversation:
-${conversationText}
-
-Required JSON format (return only this, no other text):
-{
-  "topic": "Brief main topic being discussed",
-  "keyPoints": ["Key point 1", "Key point 2", "Key point 3"],
-  "actions": ["Suggested action 1", "Suggested action 2", "Suggested action 3"]
-}`
+            content: prompts.user
           }
         ],
         max_tokens: this.config.maxTokens,
@@ -300,23 +297,20 @@ Required JSON format (return only this, no other text):
       // Get the previous topic text for comparison
       const previousTopic = this.currentTopic.topic || this.currentTopic.description || 'No previous topic';
       
+      // Get prompts from PromptManager
+      const prompts = await this.promptManager.getTopicComparisonPrompts(previousTopic, newTopicDescription);
+      
       // Use OpenAI to compare topics for similarity
       const response = await this.openai.chat.completions.create({
         model: this.config.model,
         messages: [
           {
             role: 'system',
-            content: 'You are an expert at comparing conversation topics. Determine if two topic descriptions represent different subjects. Only respond with "YES" or "NO".'
+            content: prompts.system
           },
           {
             role: 'user',
-            content: `Compare these two conversation topic descriptions and determine if they represent significantly different topics. Respond with only "YES" if they are different topics, or "NO" if they are the same or very similar topic.
-
-Previous Topic: ${previousTopic}
-
-New Topic: ${newTopicDescription}
-
-Are these different topics?`
+            content: prompts.user
           }
         ],
         max_tokens: 10,

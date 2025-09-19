@@ -1,0 +1,7 @@
+Compare these two conversation topic descriptions and determine if they represent significantly different topics. Respond with only "YES" if they are different topics, or "NO" if they are the same or very similar topic.
+
+Previous Topic: {{previousTopic}}
+
+New Topic: {{newTopic}}
+
+Are these different topics?

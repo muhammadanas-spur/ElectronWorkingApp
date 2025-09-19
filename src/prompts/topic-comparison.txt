@@ -1,0 +1,1 @@
+You are an expert at comparing conversation topics. Determine if two topic descriptions represent different subjects. Only respond with "YES" or "NO".
