@@ -294,8 +294,13 @@ class OverlayApplication {
     
     // Audio data processing (from renderer process)
     ipcMain.handle('process-audio-data', (event, audioData) => this.processAudioData(audioData));
+    ipcMain.handle('process-system-audio-data', (event, audioData) => this.processSystemAudioData(audioData));
     ipcMain.handle('set-microphone-active', (event, active) => this.setMicrophoneActive(active));
+    ipcMain.handle('set-system-audio-active', (event, active) => this.setSystemAudioActive(active));
     ipcMain.handle('update-audio-devices', (event, devices) => this.updateAudioDevices(devices));
+    
+    // Desktop capturer for system audio
+    ipcMain.handle('get-desktop-sources', () => this.getDesktopSources());
     
     // Voice configuration and devices
     ipcMain.handle('get-audio-devices', () => this.getAudioDevices());
@@ -739,6 +744,76 @@ class OverlayApplication {
       return { success: true };
     } catch (error) {
       logger.error('Failed to update audio devices', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Process system audio data from desktop capturer
+   */
+  processSystemAudioData(audioData) {
+    if (!this.voiceManager || !this.voiceInitialized) {
+      return { success: false, error: 'Voice Manager not initialized' };
+    }
+    
+    try {
+      this.voiceManager.processSystemAudioData(audioData);
+      return { success: true };
+    } catch (error) {
+      logger.error('Failed to process system audio data', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Set system audio active state
+   */
+  setSystemAudioActive(active) {
+    if (!this.voiceManager || !this.voiceInitialized) {
+      return { success: false, error: 'Voice Manager not initialized' };
+    }
+    
+    try {
+      this.voiceManager.audioCapture.setSystemAudioActive(active);
+      return { success: true };
+    } catch (error) {
+      logger.error('Failed to set system audio active state', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Get available desktop sources for system audio capture
+   */
+  async getDesktopSources() {
+    try {
+      const sources = await desktopCapturer.getSources({
+        types: ['window', 'screen'],
+        thumbnailSize: { width: 320, height: 180 }
+      });
+      
+      // Filter for common meeting applications and system sources
+      const filteredSources = sources.filter(source => {
+        const name = source.name.toLowerCase();
+        return name.includes('teams') || 
+               name.includes('zoom') || 
+               name.includes('meet') || 
+               name.includes('skype') || 
+               name.includes('discord') || 
+               name.includes('screen') ||
+               source.id.startsWith('screen:');
+      });
+      
+      return { 
+        success: true, 
+        sources: filteredSources.map(source => ({
+          id: source.id,
+          name: source.name,
+          thumbnail: source.thumbnail?.toDataURL?.() || null
+        }))
+      };
+    } catch (error) {
+      logger.error('Failed to get desktop sources', error);
       return { success: false, error: error.message };
     }
   }

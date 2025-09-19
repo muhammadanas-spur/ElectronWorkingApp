@@ -1,0 +1,70 @@
+{
+  "id": "session_1758284594323_anrl9sr3jqh",
+  "startTime": 1758284594323,
+  "endTime": 1758284610039,
+  "transcripts": [
+    {
+      "id": "transcript_1758284597295_vhmwujtr",
+      "streamId": "microphone",
+      "speaker": "Me",
+      "text": "Hello, how are you?",
+      "taggedText": "[Me] Hello, how are you?",
+      "confidence": 0,
+      "timestamp": 1758284597294,
+      "type": "final",
+      "sessionId": "session_1758284594323_anrl9sr3jqh"
+    },
+    {
+      "id": "transcript_1758284599893_spxa6omc",
+      "streamId": "microphone",
+      "speaker": "Me",
+      "text": "I am fine. How are you?",
+      "taggedText": "[Me] I am fine. How are you?",
+      "confidence": 0,
+      "timestamp": 1758284599893,
+      "type": "final",
+      "sessionId": "session_1758284594323_anrl9sr3jqh"
+    },
+    {
+      "id": "transcript_1758284606082_6islur21",
+      "streamId": "microphone",
+      "speaker": "Me",
+      "text": "OK, uh, So what do you know want to know about our product?",
+      "taggedText": "[Me] OK, uh, So what do you know want to know about our product?",
+      "confidence": 0,
+      "timestamp": 1758284606081,
+      "type": "final",
+      "sessionId": "session_1758284594323_anrl9sr3jqh"
+    },
+    {
+      "id": "transcript_1758284609287_rse5xn8m",
+      "streamId": "microphone",
+      "speaker": "Me",
+      "text": "But can you tell me about your price model?",
+      "taggedText": "[Me] But can you tell me about your price model?",
+      "confidence": 0,
+      "timestamp": 1758284609286,
+      "type": "final",
+      "sessionId": "session_1758284594323_anrl9sr3jqh"
+    }
+  ],
+  "metadata": {
+    "captureMode": "dual",
+    "language": "en-US",
+    "startTime": 1758284594322
+  },
+  "summary": {
+    "totalTranscripts": 4,
+    "speakers": [
+      {
+        "speaker": "Me",
+        "transcriptCount": 4,
+        "wordCount": 32
+      }
+    ],
+    "duration": 15716,
+    "wordCount": 32,
+    "averageConfidence": 0
+  },
+  "exportedAt": 1758284610041
+}

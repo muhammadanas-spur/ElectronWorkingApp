@@ -70,6 +70,10 @@ class SpeechRecognitionService extends EventEmitter {
       
       speechConfig.speechRecognitionLanguage = this.config.language;
       
+      // Enable speaker diarization for multi-speaker detection
+      speechConfig.setProperty('DiarizationEnabled', 'true');
+      speechConfig.setProperty('MaxSpeakerCount', '2'); // Limit to 2 speakers for better accuracy
+      
       // Enable interim results if configured
       if (this.config.enableInterimResults) {
         speechConfig.setProperty(

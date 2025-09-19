@@ -1,0 +1,37 @@
+{
+  "id": "session_1758283781097_8zp4umisk0e",
+  "startTime": 1758283781097,
+  "endTime": 1758283785559,
+  "transcripts": [
+    {
+      "id": "transcript_1758283784795_0yjn9x6n",
+      "streamId": "microphone",
+      "speaker": "Me",
+      "text": "Tell me about your product. What does your product do?",
+      "taggedText": "[Me] Tell me about your product. What does your product do?",
+      "confidence": 0,
+      "timestamp": 1758283784794,
+      "type": "final",
+      "sessionId": "session_1758283781097_8zp4umisk0e"
+    }
+  ],
+  "metadata": {
+    "captureMode": "dual",
+    "language": "en-US",
+    "startTime": 1758283781096
+  },
+  "summary": {
+    "totalTranscripts": 1,
+    "speakers": [
+      {
+        "speaker": "Me",
+        "transcriptCount": 1,
+        "wordCount": 10
+      }
+    ],
+    "duration": 4462,
+    "wordCount": 10,
+    "averageConfidence": 0
+  },
+  "exportedAt": 1758283785562
+}

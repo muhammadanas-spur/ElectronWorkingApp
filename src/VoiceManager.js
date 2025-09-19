@@ -274,16 +274,46 @@ class VoiceManager extends EventEmitter {
   }
 
   /**
+   * Handle system audio data from desktop capturer
+   */
+  handleSystemAudio(audioData) {
+    console.log(`🔊 VoiceManager: Received SYSTEM audio data - ${audioData.audioData?.length || 0} bytes`);
+    console.log(`🔊 VoiceManager: Speech service stream active for system: ${this.speechService.isStreamActive('system')}`);
+    
+    if (this.speechService.isStreamActive('system')) {
+      const success = this.speechService.processAudioData('system', audioData.audioData);
+      console.log(`🔊 VoiceManager: Sent system audio data to speech service, success: ${success}`);
+    } else {
+      console.log('🔊 VoiceManager: Speech service not active for system stream');
+    }
+  }
+
+  /**
    * Process audio data from renderer process (via IPC)
    * This handles audio captured using getUserMedia in the renderer
    */
   processRendererAudioData(audioData) {
     try {
+      console.log('🎤 VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"');
       // Pass audio data to the audio capture manager for processing
       this.audioCapture.processAudioData(audioData, 'microphone');
     } catch (error) {
       this.log('Error processing renderer audio data', error);
       this.emit('audio-error', error);
+    }
+  }
+
+  /**
+   * Process system audio data from desktop capturer
+   */
+  processSystemAudioData(audioData) {
+    try {
+      console.log('🔊 VoiceManager: Processing SYSTEM audio data - should be tagged as "Other"');
+      // Pass system audio data to the audio capture manager for processing
+      this.audioCapture.processAudioData(audioData, 'system');
+    } catch (error) {
+      this.log('Error processing system audio data', error);
+      this.emit('system-audio-error', error);
     }
   }
 

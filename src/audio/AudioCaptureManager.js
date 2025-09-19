@@ -31,6 +31,7 @@ class AudioCaptureManager extends EventEmitter {
     // Recording state
     this.isRecording = false;
     this.microphoneActive = false;
+    this.systemAudioActive = false;
     
     // Audio devices (will be populated from renderer process)
     this.inputDevices = [];
@@ -143,7 +144,8 @@ class AudioCaptureManager extends EventEmitter {
    */
   processAudioData(audioData, source = 'microphone') {
     try {
-      console.log(`AudioCaptureManager: Received ${audioData?.length || 0} audio samples from ${source}`);
+      const speakerTag = source === 'microphone' ? 'Me' : 'Other';
+      console.log(`🎵 AudioCaptureManager: Received ${audioData?.length || 0} audio samples from ${source} -> Speaker: "${speakerTag}"`);
       
       // Convert the audio data to format suitable for Azure Speech SDK
       const processedBuffer = this.processAudioBuffer(audioData);
@@ -151,12 +153,13 @@ class AudioCaptureManager extends EventEmitter {
       // Add to audio buffer
       this.audioDataBuffer.push(processedBuffer);
       
-      console.log(`AudioCaptureManager: Emitting microphone-audio event with ${processedBuffer.length} bytes`);
+      const eventName = source === 'microphone' ? 'microphone-audio' : 'system-audio';
+      console.log(`🎵 AudioCaptureManager: Emitting ${eventName} event with ${processedBuffer.length} bytes for speaker "${speakerTag}"`);
       
-      // Emit audio data for speech recognition
-      this.emit('microphone-audio', {
+      // Emit audio data for speech recognition with correct event name
+      this.emit(eventName, {
         source: source,
-        speaker: source === 'microphone' ? 'Me' : 'Other',
+        speaker: speakerTag,
         audioData: processedBuffer,
         timestamp: Date.now()
       });
@@ -185,6 +188,19 @@ class AudioCaptureManager extends EventEmitter {
       this.emit('microphone-stopped');
     }
     this.log(`Microphone ${active ? 'activated' : 'deactivated'}`);
+  }
+
+  /**
+   * Set system audio capture active state
+   */
+  setSystemAudioActive(active) {
+    this.systemAudioActive = active;
+    if (active) {
+      this.emit('system-audio-started');
+    } else {
+      this.emit('system-audio-stopped');
+    }
+    this.log(`System audio ${active ? 'activated' : 'deactivated'}`);
   }
 
   /**

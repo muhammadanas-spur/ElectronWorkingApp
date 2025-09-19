@@ -23,8 +23,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   // Audio data processing (from renderer to main process)
   processAudioData: (audioData) => ipcRenderer.invoke('process-audio-data', audioData),
+  processSystemAudioData: (audioData) => ipcRenderer.invoke('process-system-audio-data', audioData),
   setMicrophoneActive: (active) => ipcRenderer.invoke('set-microphone-active', active),
+  setSystemAudioActive: (active) => ipcRenderer.invoke('set-system-audio-active', active),
   updateAudioDevices: (devices) => ipcRenderer.invoke('update-audio-devices', devices),
+  
+  // Desktop capturer for system audio
+  getDesktopSources: () => ipcRenderer.invoke('get-desktop-sources'),
   
   // Voice configuration and devices
   getAudioDevices: () => ipcRenderer.invoke('get-audio-devices'),

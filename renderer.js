@@ -20,6 +20,13 @@ class OverlayRenderer {
     this.audioWorkletNode = null;
     this.audioDevices = { inputDevices: [], outputDevices: [] };
 
+    // System audio capture state
+    this.systemAudioStream = null;
+    this.systemAudioContext = null;
+    this.systemAudioWorkletNode = null;
+    this.systemAudioActive = false;
+    this.desktopSources = [];
+
     this.initializeElements();
     this.setupEventListeners();
     this.setupVoiceEventListeners();
@@ -737,6 +744,194 @@ class OverlayRenderer {
     }
   }
 
+  /**
+   * Process system audio data from desktop capture
+   */
+  async processSystemAudioData(audioBuffer) {
+    try {
+      if (!this.systemAudioActive || !window.electronAPI) {
+        return;
+      }
+
+      // Calculate audio level
+      let sum = 0;
+      let max = 0;
+      for (let i = 0; i < audioBuffer.length; i++) {
+        const abs = Math.abs(audioBuffer[i]);
+        sum += abs;
+        max = Math.max(max, abs);
+      }
+      const average = sum / audioBuffer.length;
+
+      // Convert Float32Array to Int16Array for Azure Speech SDK
+      const int16Buffer = new Int16Array(audioBuffer.length);
+      for (let i = 0; i < audioBuffer.length; i++) {
+        const sample = Math.max(-1, Math.min(1, audioBuffer[i]));
+        int16Buffer[i] = sample * 0x7FFF;
+      }
+
+      // Log audio levels periodically
+      if (Math.random() < 0.1) {
+        console.log(`System audio levels - Max: ${max.toFixed(4)}, Avg: ${average.toFixed(4)}`);
+      }
+
+      // Send to Azure if there's meaningful audio
+      if (max > 0.001) {
+        const result = await window.electronAPI.processSystemAudioData(Array.from(int16Buffer));
+        if (!result.success) {
+          console.error('Failed to send system audio data to main process:', result.error);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to process system audio data:', error);
+    }
+  }
+
+  /**
+   * Get available desktop sources for system audio capture
+   */
+  async getDesktopSources() {
+    try {
+      console.log('🔍 Getting desktop sources...');
+      if (!window.electronAPI) {
+        throw new Error('Electron API not available');
+      }
+
+      const result = await window.electronAPI.getDesktopSources();
+      console.log('🔍 Desktop sources result:', result);
+      
+      if (result.success) {
+        this.desktopSources = result.sources;
+        console.log(`🔍 Found ${result.sources.length} desktop sources:`, result.sources.map(s => s.name));
+        return result.sources;
+      } else {
+        console.error('❌ Failed to get desktop sources:', result.error);
+        throw new Error(result.error || 'Failed to get desktop sources');
+      }
+    } catch (error) {
+      console.error('❌ Failed to get desktop sources:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Start system audio capture from a specific source
+   */
+  async startSystemAudioCapture(sourceId) {
+    try {
+      console.log('🔊 Starting system audio capture for source:', sourceId);
+      if (!sourceId) {
+        throw new Error('Source ID is required for system audio capture');
+      }
+
+      console.log('🔊 Requesting system audio access...');
+      // Use getDisplayMedia to capture system audio from the selected source
+      // In Electron, try getDisplayMedia first, then fallback to getUserMedia
+      try {
+        console.log('🔊 Trying getDisplayMedia approach...');
+        this.systemAudioStream = await navigator.mediaDevices.getDisplayMedia({
+          audio: true,
+          video: false
+        });
+      } catch (displayError) {
+        console.log('🔊 getDisplayMedia failed, trying getUserMedia with chromeMediaSource...', displayError.message);
+        this.systemAudioStream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            mandatory: {
+              chromeMediaSource: 'desktop',
+              chromeMediaSourceId: sourceId
+            }
+          },
+          video: {
+            mandatory: {
+              chromeMediaSource: 'desktop',
+              chromeMediaSourceId: sourceId,
+              maxWidth: 1,
+              maxHeight: 1
+            }
+          }
+        });
+      }
+
+      console.log('✅ System audio access granted for source:', sourceId);
+      console.log('🔊 System audio stream tracks:', this.systemAudioStream.getTracks().map(t => `${t.kind}: ${t.label}`));
+
+      // Create audio context for system audio processing
+      this.systemAudioContext = new (window.AudioContext || window.webkitAudioContext)({
+        sampleRate: 16000
+      });
+
+      const source = this.systemAudioContext.createMediaStreamSource(this.systemAudioStream);
+
+      // Create script processor for real-time system audio data
+      const bufferSize = 4096;
+      this.systemAudioWorkletNode = this.systemAudioContext.createScriptProcessor(bufferSize, 1, 1);
+      
+      this.systemAudioWorkletNode.onaudioprocess = (event) => {
+        const inputBuffer = event.inputBuffer.getChannelData(0);
+        this.processSystemAudioData(inputBuffer);
+      };
+
+      // Connect system audio processing chain
+      source.connect(this.systemAudioWorkletNode);
+      this.systemAudioWorkletNode.connect(this.systemAudioContext.destination);
+
+      // Notify main process that system audio is active
+      if (window.electronAPI) {
+        await window.electronAPI.setSystemAudioActive(true);
+      }
+
+      this.systemAudioActive = true;
+      console.log('System audio capture started');
+      return true;
+    } catch (error) {
+      console.error('❌ Failed to start system audio capture:', error);
+      console.error('❌ Error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
+      this.showFeedback('microphone', `❌ System audio access denied: ${error.message}`, 3000);
+      return false;
+    }
+  }
+
+  /**
+   * Stop system audio capture
+   */
+  async stopSystemAudioCapture() {
+    try {
+      // Stop system audio stream
+      if (this.systemAudioStream) {
+        this.systemAudioStream.getTracks().forEach(track => track.stop());
+        this.systemAudioStream = null;
+      }
+
+      // Clean up system audio processing
+      if (this.systemAudioWorkletNode) {
+        this.systemAudioWorkletNode.disconnect();
+        this.systemAudioWorkletNode = null;
+      }
+
+      if (this.systemAudioContext) {
+        await this.systemAudioContext.close();
+        this.systemAudioContext = null;
+      }
+
+      // Notify main process that system audio is inactive
+      if (window.electronAPI) {
+        await window.electronAPI.setSystemAudioActive(false);
+      }
+
+      this.systemAudioActive = false;
+      console.log('System audio capture stopped');
+      return true;
+    } catch (error) {
+      console.error('Failed to stop system audio capture:', error);
+      return false;
+    }
+  }
+
   async handleMicrophoneClick() {
     if (!this.voiceAvailable || !this.voiceInitialized) {
       this.showFeedback('microphone', '🎙️ Voice features not available - check Azure credentials');
@@ -745,31 +940,91 @@ class OverlayRenderer {
 
     try {
       if (this.isRecording) {
-        // Stop recording
+        // Stop both microphone and system audio recording
         await this.stopAudioCapture();
+        await this.stopSystemAudioCapture();
         const result = await window.electronAPI.stopVoiceRecording();
         if (result.success) {
-          this.showFeedback('microphone', '⏹️ Recording stopped');
+          this.showFeedback('microphone', '⏹️ Recording stopped (mic + system audio)');
         } else {
           this.showFeedback('microphone', `❌ Failed to stop: ${result.error}`);
         }
       } else {
-        // Start recording
-        const audioStarted = await this.startAudioCapture();
-        if (audioStarted) {
-          const result = await window.electronAPI.startVoiceRecording();
-          if (result.success) {
-            this.showFeedback('microphone', '🎙️ Recording started - sending audio to Azure Speech');
+        // Start dual audio capture (microphone + system audio)
+        this.showFeedback('microphone', '🎙️ Starting dual audio capture...');
+        
+        // 1. Start microphone capture
+        const micStarted = await this.startAudioCapture();
+        if (!micStarted) {
+          this.showFeedback('microphone', '❌ Failed to start microphone');
+          return;
+        }
+        
+        // 2. Check for headphones and decide on audio capture strategy
+        const audioDevices = await navigator.mediaDevices.enumerateDevices();
+        const outputDevices = audioDevices.filter(device => device.kind === 'audiooutput');
+        const hasHeadphones = outputDevices.some(device => 
+          device.label.toLowerCase().includes('headphone') || 
+          device.label.toLowerCase().includes('headset') ||
+          device.label.toLowerCase().includes('airpods') ||
+          device.label.toLowerCase().includes('bluetooth')
+        );
+        
+        let systemAudioStarted = false;
+        
+        if (hasHeadphones) {
+          console.log('🎧 Headphones detected - using microphone-only mode with speaker diarization');
+          this.showFeedback('microphone', '🎧 Headphones detected - using smart speaker separation');
+        } else {
+          console.log('🔍 Getting desktop sources for dual audio capture...');
+          const sources = await this.getDesktopSources();
+          
+          console.log(`🔍 Found ${sources.length} desktop sources`);
+          if (sources.length > 0) {
+            // Try to find a meeting app window first
+            let selectedSource = sources.find(source => {
+              const name = source.name.toLowerCase();
+              return name.includes('teams') || name.includes('zoom') || name.includes('meet') || name.includes('discord');
+            });
+            
+            console.log('🔍 Meeting app source found:', selectedSource?.name || 'None');
+            
+            // If no meeting app found, use the first screen source
+            if (!selectedSource) {
+              selectedSource = sources.find(source => source.id.startsWith('screen:')) || sources[0];
+              console.log('🔍 Using fallback source:', selectedSource?.name || 'None');
+            }
+            
+            if (selectedSource) {
+              console.log(`🔊 Attempting system audio capture from: ${selectedSource.name} (${selectedSource.id})`);
+              systemAudioStarted = await this.startSystemAudioCapture(selectedSource.id);
+              console.log(`🔊 System audio capture result: ${systemAudioStarted ? 'SUCCESS' : 'FAILED'}`);
+            } else {
+              console.error('❌ No suitable desktop source found');
+            }
           } else {
-            await this.stopAudioCapture();
-            this.showFeedback('microphone', `❌ Failed to start Azure Speech: ${result.error}`);
+            console.error('❌ No desktop sources available');
           }
+        }
+        
+        // 3. Start voice recording service
+        const result = await window.electronAPI.startVoiceRecording();
+        if (result.success) {
+          const statusMessage = systemAudioStarted 
+            ? '🎙️+🔊 Recording: Microphone + System Audio (dual speaker mode)'
+            : '🎙️ Recording: Microphone only (system audio failed)';
+          this.showFeedback('microphone', statusMessage);
+        } else {
+          await this.stopAudioCapture();
+          await this.stopSystemAudioCapture();
+          this.showFeedback('microphone', `❌ Failed to start Azure Speech: ${result.error}`);
         }
       }
     } catch (error) {
       console.error('Microphone click error:', error);
       this.showFeedback('microphone', '❌ Voice recording error');
       await this.stopAudioCapture();
+      await this.stopSystemAudioCapture();
     }
   }
 }
