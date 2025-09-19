@@ -313,6 +313,9 @@ class OverlayApplication {
     ipcMain.handle('search-transcripts', (event, query, options) => this.searchTranscripts(query, options));
     ipcMain.handle('export-session', (event, format) => this.exportSession(format));
     
+    // QUICK FIX: Transcript configuration for duplicate filtering
+    ipcMain.handle('update-transcript-config', (event, config) => this.updateTranscriptConfig(config));
+    
     // Status queries
     ipcMain.handle('is-visible', () => this.isVisible);
     ipcMain.handle('is-interactive', () => this.isInteractive);
@@ -668,6 +671,26 @@ class OverlayApplication {
     }
     
     return this.voiceManager.getRecentTranscripts(count);
+  }
+
+  /**
+   * QUICK FIX: Update transcript configuration for duplicate filtering
+   */
+  updateTranscriptConfig(config) {
+    if (!this.voiceManager || !this.voiceInitialized) {
+      console.warn('Voice manager not initialized, cannot update transcript config');
+      return { success: false, error: 'Voice manager not initialized' };
+    }
+    
+    try {
+      // Update the transcript manager configuration
+      this.voiceManager.updateTranscriptConfig(config);
+      console.log('Transcript configuration updated:', config);
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to update transcript config:', error);
+      return { success: false, error: error.message };
+    }
   }
 
   /**

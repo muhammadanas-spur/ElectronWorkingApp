@@ -42,6 +42,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   searchTranscripts: (query, options) => ipcRenderer.invoke('search-transcripts', query, options),
   exportSession: (format) => ipcRenderer.invoke('export-session', format),
   
+  // QUICK FIX: Transcript configuration for duplicate filtering
+  updateTranscriptConfig: (config) => ipcRenderer.invoke('update-transcript-config', config),
+  
   // Status queries
   getWindowStats: () => ipcRenderer.invoke('get-window-stats'),
   isVisible: () => ipcRenderer.invoke('is-visible'),

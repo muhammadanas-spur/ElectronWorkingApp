@@ -1,0 +1,53 @@
+{
+  "id": "session_1758312099233_hp93emiu98",
+  "startTime": 1758312099233,
+  "endTime": 1758312129820,
+  "transcripts": [
+    {
+      "id": "transcript_1758312107425_1hvzuk20",
+      "streamId": "microphone",
+      "speaker": "Me",
+      "text": "OK, So what do you need from my side? What kind of application that you need build?",
+      "taggedText": "[Me] OK, So what do you need from my side? What kind of application that you need build?",
+      "confidence": 0,
+      "timestamp": 1758312107425,
+      "type": "final",
+      "sessionId": "session_1758312099233_hp93emiu98"
+    },
+    {
+      "id": "transcript_1758312124646_fgsb3ab8",
+      "streamId": "system",
+      "speaker": "Other",
+      "text": "I need a new application.",
+      "taggedText": "[Other] I need a new application.",
+      "confidence": 0,
+      "timestamp": 1758312124646,
+      "type": "final",
+      "sessionId": "session_1758312099233_hp93emiu98"
+    }
+  ],
+  "metadata": {
+    "captureMode": "dual",
+    "language": "en-US",
+    "startTime": 1758312099232
+  },
+  "summary": {
+    "totalTranscripts": 2,
+    "speakers": [
+      {
+        "speaker": "Me",
+        "transcriptCount": 1,
+        "wordCount": 17
+      },
+      {
+        "speaker": "Other",
+        "transcriptCount": 1,
+        "wordCount": 5
+      }
+    ],
+    "duration": 30587,
+    "wordCount": 22,
+    "averageConfidence": 0
+  },
+  "exportedAt": 1758312129821
+}

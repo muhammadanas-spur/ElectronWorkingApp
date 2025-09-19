@@ -391,6 +391,13 @@ class VoiceManager extends EventEmitter {
   }
 
   /**
+   * QUICK FIX: Update transcript configuration for duplicate filtering
+   */
+  updateTranscriptConfig(config) {
+    this.transcriptManager.updateConfig(config);
+  }
+
+  /**
    * Export current session
    */
   exportSession(format = 'json') {

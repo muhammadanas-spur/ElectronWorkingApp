@@ -17,6 +17,12 @@ class TranscriptManager extends EventEmitter {
       sessionTimeout: config.sessionTimeout || 30000,
       saveDirectory: config.saveDirectory || './transcripts',
       debug: config.debug || false,
+      // Quick fix for duplicate transcripts
+      filterDuplicates: config.filterDuplicates !== false,
+      suppressMicrophoneWhenSystemAudio: config.suppressMicrophoneWhenSystemAudio !== false,
+      duplicateTimeWindow: config.duplicateTimeWindow || 3000, // 3 seconds
+      similarityThreshold: config.similarityThreshold || 0.8, // 80% similarity
+      preferSystemAudio: config.preferSystemAudio !== false, // Prefer "Other" over "Me"
       ...config
     };
     
@@ -227,6 +233,13 @@ class TranscriptManager extends EventEmitter {
       
       console.log(`TranscriptManager: Created transcript object:`, transcript);
       
+      // QUICK FIX: Check for duplicates and filter if needed
+      if (this.config.filterDuplicates && this.shouldFilterDuplicate(transcript)) {
+        console.log(`TranscriptManager: Filtered duplicate transcript from ${speaker}: "${text.trim()}"`);
+        this.log(`Filtered duplicate transcript [${speaker}]: ${text.trim()}`);
+        return null; // Don't add duplicate
+      }
+      
       // Add to transcripts
       this.transcripts.push(transcript);
       console.log(`TranscriptManager: Added to transcripts array, total count: ${this.transcripts.length}`);
@@ -265,6 +278,148 @@ class TranscriptManager extends EventEmitter {
    */
   getSpeakerFromStreamId(streamId) {
     return this.speakerMap[streamId] || streamId;
+  }
+
+  /**
+   * QUICK FIX: Check if a transcript should be filtered as duplicate
+   */
+  shouldFilterDuplicate(newTranscript) {
+    try {
+      // Option 1: If preferSystemAudio is enabled, suppress microphone when we have system audio
+      if (this.config.suppressMicrophoneWhenSystemAudio && newTranscript.speaker === 'Me') {
+        // Check if there's a recent "Other" transcript
+        const recentOtherTranscripts = this.getRecentTranscriptsBySpeaker('Other', 5);
+        if (recentOtherTranscripts.length > 0) {
+          const latestOther = recentOtherTranscripts[recentOtherTranscripts.length - 1];
+          const timeDiff = newTranscript.timestamp - latestOther.timestamp;
+          
+          // If system audio is active within the time window, suppress microphone
+          if (timeDiff >= 0 && timeDiff <= this.config.duplicateTimeWindow) {
+            console.log(`TranscriptManager: Suppressing microphone transcript - system audio is active`);
+            return true;
+          }
+        }
+      }
+
+      // Option 2: Check for similar text in recent transcripts
+      const recentTranscripts = this.getRecentTranscripts(10);
+      
+      for (const existingTranscript of recentTranscripts) {
+        // Skip if same stream
+        if (existingTranscript.streamId === newTranscript.streamId) continue;
+        
+        // Check if within time window
+        const timeDiff = Math.abs(newTranscript.timestamp - existingTranscript.timestamp);
+        if (timeDiff > this.config.duplicateTimeWindow) continue;
+        
+        // Check text similarity
+        const similarity = this.calculateTextSimilarity(newTranscript.text, existingTranscript.text);
+        
+        if (similarity >= this.config.similarityThreshold) {
+          console.log(`TranscriptManager: Found similar transcript - similarity: ${(similarity * 100).toFixed(1)}%`);
+          
+          // If preferSystemAudio, keep "Other" and filter "Me"
+          if (this.config.preferSystemAudio) {
+            if (newTranscript.speaker === 'Me' && existingTranscript.speaker === 'Other') {
+              console.log(`TranscriptManager: Filtering microphone duplicate in favor of system audio`);
+              return true; // Filter the microphone transcript
+            }
+            if (newTranscript.speaker === 'Other' && existingTranscript.speaker === 'Me') {
+              // Remove the existing microphone transcript and keep the system audio one
+              this.removeTranscript(existingTranscript.id);
+              console.log(`TranscriptManager: Removed previous microphone transcript in favor of system audio`);
+              return false; // Keep the system audio transcript
+            }
+          }
+          
+          // Default: keep the first one, filter the duplicate
+          return true;
+        }
+      }
+      
+      return false; // Not a duplicate
+    } catch (error) {
+      console.error('TranscriptManager: Error checking for duplicates', error);
+      return false; // On error, don't filter
+    }
+  }
+
+  /**
+   * QUICK FIX: Calculate text similarity using simple word matching
+   */
+  calculateTextSimilarity(text1, text2) {
+    try {
+      // Normalize texts
+      const normalize = (text) => text.toLowerCase().replace(/[^\w\s]/g, '').trim();
+      
+      const normalizedText1 = normalize(text1);
+      const normalizedText2 = normalize(text2);
+      
+      if (!normalizedText1 || !normalizedText2) return 0;
+      
+      // If texts are identical, return 1
+      if (normalizedText1 === normalizedText2) return 1;
+      
+      // Split into words
+      const words1 = normalizedText1.split(/\s+/);
+      const words2 = normalizedText2.split(/\s+/);
+      
+      // Calculate Jaccard similarity (intersection / union)
+      const set1 = new Set(words1);
+      const set2 = new Set(words2);
+      
+      const intersection = new Set([...set1].filter(word => set2.has(word)));
+      const union = new Set([...set1, ...set2]);
+      
+      const jaccardSimilarity = intersection.size / union.size;
+      
+      // Also check substring similarity for short phrases
+      const longerText = normalizedText1.length > normalizedText2.length ? normalizedText1 : normalizedText2;
+      const shorterText = normalizedText1.length <= normalizedText2.length ? normalizedText1 : normalizedText2;
+      
+      const substringMatch = longerText.includes(shorterText) ? 0.3 : 0;
+      
+      return Math.max(jaccardSimilarity, substringMatch);
+    } catch (error) {
+      console.error('TranscriptManager: Error calculating text similarity', error);
+      return 0;
+    }
+  }
+
+  /**
+   * QUICK FIX: Get recent transcripts by speaker
+   */
+  getRecentTranscriptsBySpeaker(speaker, count = 10) {
+    return this.transcripts
+      .filter(t => t.speaker === speaker)
+      .slice(-count);
+  }
+
+  /**
+   * QUICK FIX: Remove a transcript by ID
+   */
+  removeTranscript(transcriptId) {
+    try {
+      const index = this.transcripts.findIndex(t => t.id === transcriptId);
+      if (index !== -1) {
+        this.transcripts.splice(index, 1);
+        
+        // Also remove from current session if active
+        if (this.currentSession) {
+          const sessionIndex = this.currentSession.transcripts.findIndex(t => t.id === transcriptId);
+          if (sessionIndex !== -1) {
+            this.currentSession.transcripts.splice(sessionIndex, 1);
+          }
+        }
+        
+        console.log(`TranscriptManager: Removed transcript ${transcriptId}`);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('TranscriptManager: Error removing transcript', error);
+      return false;
+    }
   }
 
   /**
@@ -540,6 +695,34 @@ class TranscriptManager extends EventEmitter {
   updateConfig(newConfig) {
     this.config = { ...this.config, ...newConfig };
     this.log('Configuration updated', this.config);
+    this.emit('config-updated', this.config);
+  }
+
+  /**
+   * QUICK FIX: Enable/disable duplicate filtering
+   */
+  setDuplicateFiltering(enabled) {
+    this.config.filterDuplicates = enabled;
+    this.log(`Duplicate filtering ${enabled ? 'enabled' : 'disabled'}`);
+    this.emit('config-updated', this.config);
+  }
+
+  /**
+   * QUICK FIX: Enable "system audio only" mode (suppress all microphone)
+   */
+  setSystemAudioOnlyMode(enabled) {
+    this.config.suppressMicrophoneWhenSystemAudio = enabled;
+    this.config.preferSystemAudio = enabled;
+    this.log(`System audio only mode ${enabled ? 'enabled' : 'disabled'}`);
+    this.emit('config-updated', this.config);
+  }
+
+  /**
+   * QUICK FIX: Set similarity threshold for duplicate detection
+   */
+  setSimilarityThreshold(threshold) {
+    this.config.similarityThreshold = Math.max(0, Math.min(1, threshold));
+    this.log(`Similarity threshold set to ${(this.config.similarityThreshold * 100).toFixed(1)}%`);
     this.emit('config-updated', this.config);
   }
 

@@ -932,6 +932,8 @@ class OverlayRenderer {
     }
   }
 
+
+
   async handleMicrophoneClick() {
     if (!this.voiceAvailable || !this.voiceInitialized) {
       this.showFeedback('microphone', '🎙️ Voice features not available - check Azure credentials');
