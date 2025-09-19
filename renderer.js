@@ -374,21 +374,39 @@ class OverlayRenderer {
         // Calculate the required dimensions based on visible content
         const container = this.elements.overlayContainer;
         const tooltip = this.elements.shortcutsTooltip;
+        const insightsPanel = this.elements.insightsPanel;
         
-        // Base dimensions
+        // Base dimensions from main container
         let width = container.scrollWidth || container.offsetWidth;
         let height = container.scrollHeight || container.offsetHeight;
         
+        // Add insights panel dimensions if visible
+        if (this.insightsVisible && insightsPanel && insightsPanel.classList.contains('show')) {
+          const insightsWidth = insightsPanel.scrollWidth || insightsPanel.offsetWidth;
+          const insightsHeight = insightsPanel.scrollHeight || insightsPanel.offsetHeight;
+          
+          width = Math.max(width, insightsWidth + 20); // Add some padding
+          height += insightsHeight + 12; // Add gap between main bar and insights
+          
+          console.log('Auto-resize with insights:', { 
+            insightsWidth, 
+            insightsHeight, 
+            totalWidth: width, 
+            totalHeight: height 
+          });
+        }
+        
         // If tooltip is visible, account for its space
         if (this.tooltipVisible && tooltip) {
-          width = Math.max(width, tooltip.offsetWidth + 40); // Add padding
+          width = Math.max(width, tooltip.offsetWidth + 40);
           height = Math.max(height, tooltip.offsetHeight + container.offsetHeight + 20);
         }
         
         // Ensure minimum dimensions
-        width = Math.max(300, width);
+        width = Math.max(320, width);
         height = Math.max(50, height);
         
+        console.log('Final auto-resize dimensions:', { width, height });
         await window.electronAPI.autoResizeWindow(width, height);
       }
     } catch (error) {
@@ -636,9 +654,18 @@ class OverlayRenderer {
     if (!this.insightsVisible) {
       this.insightsVisible = true;
       this.elements.insightsPanel.classList.add('show');
+      
+      // Force a layout recalculation and resize
+      setTimeout(() => {
+        // Force browser to recalculate layout
+        this.elements.insightsPanel.offsetHeight;
+        this.autoResizeWindow();
+      }, 100);
+      
+      // Double-check resize after animation completes
       setTimeout(() => {
         this.autoResizeWindow();
-      }, 300);
+      }, 400);
     }
   }
 
