@@ -1,0 +1,37 @@
+{
+  "id": "session_1758283551731_z0ny8t9j84q",
+  "startTime": 1758283551731,
+  "endTime": 1758283556693,
+  "transcripts": [
+    {
+      "id": "transcript_1758283555945_sfnhwd2z",
+      "streamId": "microphone",
+      "speaker": "Me",
+      "text": "OK, so tell me about your product. What does your product do?",
+      "taggedText": "[Me] OK, so tell me about your product. What does your product do?",
+      "confidence": 0,
+      "timestamp": 1758283555944,
+      "type": "final",
+      "sessionId": "session_1758283551731_z0ny8t9j84q"
+    }
+  ],
+  "metadata": {
+    "captureMode": "dual",
+    "language": "en-US",
+    "startTime": 1758283551731
+  },
+  "summary": {
+    "totalTranscripts": 1,
+    "speakers": [
+      {
+        "speaker": "Me",
+        "transcriptCount": 1,
+        "wordCount": 12
+      }
+    ],
+    "duration": 4962,
+    "wordCount": 12,
+    "averageConfidence": 0
+  },
+  "exportedAt": 1758283556696
+}
