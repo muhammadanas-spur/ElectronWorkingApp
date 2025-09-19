@@ -316,6 +316,11 @@ class OverlayApplication {
     // QUICK FIX: Transcript configuration for duplicate filtering
     ipcMain.handle('update-transcript-config', (event, config) => this.updateTranscriptConfig(config));
     
+    // Topic analysis controls
+    ipcMain.handle('get-current-topic', () => this.getCurrentTopic());
+    ipcMain.handle('get-topic-status', () => this.getTopicStatus());
+    ipcMain.handle('analyze-topic-manually', () => this.analyzeTopicManually());
+    
     // Status queries
     ipcMain.handle('is-visible', () => this.isVisible);
     ipcMain.handle('is-interactive', () => this.isInteractive);
@@ -717,6 +722,77 @@ class OverlayApplication {
     } catch (error) {
       logger.error('Failed to export session', error);
       return null;
+    }
+  }
+
+  /**
+   * Get current conversation topic
+   */
+  getCurrentTopic() {
+    if (!this.voiceManager || !this.voiceInitialized) {
+      return { available: false, error: 'Voice manager not initialized' };
+    }
+    
+    try {
+      const status = this.voiceManager.getStatus();
+      if (!status.componentStatus.topicAnalyzer) {
+        return { available: false, error: 'Topic analyzer not available' };
+      }
+      
+      const topic = this.voiceManager.topicAnalyzer.getCurrentTopic();
+      return { available: true, topic };
+    } catch (error) {
+      logger.error('Failed to get current topic', error);
+      return { available: false, error: error.message };
+    }
+  }
+
+  /**
+   * Get topic analysis status
+   */
+  getTopicStatus() {
+    if (!this.voiceManager || !this.voiceInitialized) {
+      return { available: false, error: 'Voice manager not initialized' };
+    }
+    
+    try {
+      const status = this.voiceManager.getStatus();
+      if (!status.componentStatus.topicAnalyzer) {
+        return { available: false, error: 'Topic analyzer not available' };
+      }
+      
+      const topicStatus = this.voiceManager.topicAnalyzer.getStatus();
+      return { available: true, ...topicStatus };
+    } catch (error) {
+      logger.error('Failed to get topic status', error);
+      return { available: false, error: error.message };
+    }
+  }
+
+  /**
+   * Manually trigger topic analysis
+   */
+  async analyzeTopicManually() {
+    if (!this.voiceManager || !this.voiceInitialized) {
+      return { success: false, error: 'Voice manager not initialized' };
+    }
+    
+    try {
+      const status = this.voiceManager.getStatus();
+      if (!status.componentStatus.topicAnalyzer) {
+        return { success: false, error: 'Topic analyzer not available' };
+      }
+      
+      const recentTranscripts = this.voiceManager.getRecentTranscripts(20);
+      if (recentTranscripts.length === 0) {
+        return { success: false, error: 'No transcripts available for analysis' };
+      }
+      
+      await this.voiceManager.analyzeTopicFromTranscripts(recentTranscripts);
+      return { success: true, transcriptCount: recentTranscripts.length };
+    } catch (error) {
+      logger.error('Failed to analyze topic manually', error);
+      return { success: false, error: error.message };
     }
   }
 

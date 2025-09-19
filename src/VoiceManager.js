@@ -2,6 +2,7 @@ const EventEmitter = require('events');
 const AudioCaptureManager = require('./audio/AudioCaptureManager');
 const SpeechRecognitionService = require('./speech/SpeechRecognitionService');
 const TranscriptManager = require('./transcript/TranscriptManager');
+const TopicAnalyzer = require('./topic/TopicAnalyzer');
 const VoiceConfig = require('./config/VoiceConfig');
 
 /**
@@ -19,6 +20,22 @@ class VoiceManager extends EventEmitter {
     this.speechService = new SpeechRecognitionService(VoiceConfig.getAzureConfig());
     this.transcriptManager = new TranscriptManager(VoiceConfig.getTranscriptConfig());
     
+    // Initialize TopicAnalyzer only if OpenAI API key is available
+    this.topicAnalyzer = null;
+    try {
+      if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here') {
+        this.topicAnalyzer = new TopicAnalyzer({
+          apiKey: process.env.OPENAI_API_KEY,
+          debug: VoiceConfig.getTranscriptConfig().debug || false
+        });
+      } else {
+        this.log('OpenAI API key not found - topic analysis will be disabled');
+      }
+    } catch (error) {
+      this.log('Failed to initialize TopicAnalyzer - topic analysis will be disabled', error.message);
+      this.topicAnalyzer = null;
+    }
+    
     // State management
     this.isInitialized = false;
     this.isRecording = false;
@@ -29,7 +46,8 @@ class VoiceManager extends EventEmitter {
     this.componentStatus = {
       audioCapture: false,
       speechService: false,
-      transcriptManager: false
+      transcriptManager: false,
+      topicAnalyzer: false
     };
     
     this.setupEventHandlers();
@@ -53,11 +71,35 @@ class VoiceManager extends EventEmitter {
       this.componentStatus.speechService = await this.speechService.initialize();
       this.componentStatus.transcriptManager = await this.transcriptManager.initialize();
       
-      // Check if all components initialized successfully
-      const allInitialized = Object.values(this.componentStatus).every(status => status);
+      // Initialize topic analyzer (optional - don't fail if OpenAI key is missing)
+      if (this.topicAnalyzer) {
+        try {
+          this.componentStatus.topicAnalyzer = await this.topicAnalyzer.initialize();
+        } catch (error) {
+          this.log('Topic analyzer initialization failed (continuing without topic analysis)', error.message);
+          this.componentStatus.topicAnalyzer = false;
+          this.topicAnalyzer = null;
+        }
+      } else {
+        this.componentStatus.topicAnalyzer = false;
+      }
+      
+      // Check if core components initialized successfully (topic analyzer is optional)
+      const coreComponents = {
+        audioCapture: this.componentStatus.audioCapture,
+        speechService: this.componentStatus.speechService,
+        transcriptManager: this.componentStatus.transcriptManager
+      };
+      const allInitialized = Object.values(coreComponents).every(status => status);
       
       if (!allInitialized) {
-        throw new Error('Failed to initialize one or more voice components');
+        throw new Error('Failed to initialize one or more core voice components');
+      }
+      
+      // Start topic analysis if available
+      if (this.componentStatus.topicAnalyzer && this.topicAnalyzer) {
+        this.topicAnalyzer.startAnalysis();
+        this.log('Topic analysis started');
       }
       
       this.isInitialized = true;
@@ -256,6 +298,16 @@ class VoiceManager extends EventEmitter {
     this.transcriptManager.on('session-ended', (summary) => {
       this.emit('session-ended', summary);
     });
+    
+    this.transcriptManager.on('transcript-updated', (transcripts) => {
+      // Trigger topic analysis when transcripts are updated
+      if (this.componentStatus.topicAnalyzer && this.topicAnalyzer) {
+        this.analyzeTopicFromTranscripts(transcripts);
+      }
+    });
+    
+    // Topic analyzer events (only if TopicAnalyzer is available)
+    this.setupTopicAnalyzerEvents();
   }
 
   /**
@@ -344,6 +396,51 @@ class VoiceManager extends EventEmitter {
     );
     
     console.log(`VoiceManager: Added final transcript to manager`);
+  }
+
+  /**
+   * Setup topic analyzer event handlers
+   */
+  setupTopicAnalyzerEvents() {
+    if (this.topicAnalyzer) {
+      this.topicAnalyzer.on('topic-updated', (topic) => {
+        this.log('Conversation topic updated', topic.description.substring(0, 100) + '...');
+        this.notifyRenderer('topic-updated', topic);
+      });
+      
+      this.topicAnalyzer.on('analysis-requested', () => {
+        // Provide current transcripts when analysis is requested
+        const recentTranscripts = this.transcriptManager.getRecentTranscripts(20);
+        if (recentTranscripts.length > 0) {
+          this.analyzeTopicFromTranscripts(recentTranscripts);
+        }
+      });
+      
+      this.topicAnalyzer.on('file-updated', (data) => {
+        this.log('Topic file updated', data.file);
+        this.notifyRenderer('topic-file-updated', data);
+      });
+      
+      this.topicAnalyzer.on('error', (error) => {
+        this.log('Topic analysis error', error);
+        this.emit('topic-error', error);
+      });
+    }
+  }
+
+  /**
+   * Analyze conversation topic from current transcripts
+   */
+  async analyzeTopicFromTranscripts(transcripts) {
+    if (!this.componentStatus.topicAnalyzer || !this.topicAnalyzer || !transcripts || transcripts.length === 0) {
+      return;
+    }
+    
+    try {
+      await this.topicAnalyzer.analyzeTranscripts(transcripts);
+    } catch (error) {
+      this.log('Error analyzing topic from transcripts', error);
+    }
   }
 
   /**
@@ -488,6 +585,9 @@ class VoiceManager extends EventEmitter {
     await this.audioCapture.destroy();
     await this.speechService.destroy();
     await this.transcriptManager.destroy();
+    if (this.topicAnalyzer) {
+      await this.topicAnalyzer.destroy();
+    }
     
     // Remove event listeners
     this.removeAllListeners();
