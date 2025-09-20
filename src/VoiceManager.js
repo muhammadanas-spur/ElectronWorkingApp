@@ -4,6 +4,8 @@ const SpeechRecognitionService = require('./speech/SpeechRecognitionService');
 const TranscriptManager = require('./transcript/TranscriptManager');
 const TopicAnalyzer = require('./topic/TopicAnalyzer');
 const VoiceConfig = require('./config/VoiceConfig');
+const WebhookService = require('./webhook/WebhookService');
+const MeetingNotesGenerator = require('./meeting/MeetingNotesGenerator');
 
 /**
  * VoiceManager - Central orchestrator for voice features
@@ -35,6 +37,18 @@ class VoiceManager extends EventEmitter {
       this.log('Failed to initialize TopicAnalyzer - topic analysis will be disabled', error.message);
       this.topicAnalyzer = null;
     }
+    
+    // Initialize webhook service
+    this.webhookService = new WebhookService({
+      webhookUrl: process.env.WEBHOOK_URL,
+      debug: true
+    });
+    
+    // Initialize meeting notes generator
+    this.meetingNotesGenerator = new MeetingNotesGenerator({
+      apiKey: process.env.OPENAI_API_KEY,
+      debug: true
+    });
     
     // State management
     this.isInitialized = false;
@@ -211,6 +225,82 @@ class VoiceManager extends EventEmitter {
       
       this.isRecording = false;
       const recordingDuration = Date.now() - (this.recordingStartTime || Date.now());
+      
+      // Generate meeting notes and send to webhook if session has transcripts
+      if (sessionSummary && sessionSummary.transcripts && sessionSummary.transcripts.length > 0) {
+        try {
+          this.log('Generating meeting notes from transcript...', {
+            transcriptCount: sessionSummary.transcripts.length,
+            sessionId: sessionSummary.id
+          });
+          
+          // Generate meeting notes using OpenAI
+          const meetingNotesResult = await this.meetingNotesGenerator.generateMeetingNotes(sessionSummary);
+          
+          if (meetingNotesResult.success) {
+            this.log('Meeting notes and todo list generated successfully', {
+              notesLength: meetingNotesResult.meetingNotes.length,
+              todoList: meetingNotesResult.todoList
+            });
+            
+            // Send meeting notes and todo list to webhook
+            this.log('Sending meeting notes and todo list to webhook...', {
+              webhookUrl: process.env.WEBHOOK_URL
+            });
+            
+            // Format the webhook payload according to the required structure
+            const webhookPayload = {
+              meeting_notes: meetingNotesResult.meetingNotes,
+              call_id: "68cd625aadfbdf1fe71dcba8", // Static call ID as per your example
+              client_id: "68cc36dcf08509fc0085b48f", // Static client ID as per your example
+              agent_id: "68cc36dcf08509fc0085b48e", // Static agent ID as per your example
+              session_id: sessionSummary.id,
+              start_time: new Date(sessionSummary.startTime).toISOString(),
+              end_time: new Date(sessionSummary.endTime).toISOString(),
+              duration_minutes: Math.round(sessionSummary.duration / 60000),
+              timestamp: new Date().toISOString(),
+              source: "call_copilot",
+              todo_items: []
+            };
+
+            // Add schedulemeeting to todo_items
+            webhookPayload.todo_items.push({
+              "schedulemeeting": meetingNotesResult.todoList.reschedule_meeting
+            });
+
+            // Add tasks to todo_items
+            if (meetingNotesResult.todoList.tasks && meetingNotesResult.todoList.tasks.length > 0) {
+              meetingNotesResult.todoList.tasks.forEach(task => {
+                webhookPayload.todo_items.push({
+                  "task": task.task,
+                  "assignee": task.assignee,
+                  "priority": task.priority,
+                  "due_date": task.due_date
+                });
+              });
+            }
+
+            const webhookResult = await this.webhookService.sendTranscript(webhookPayload);
+            
+            if (webhookResult.success) {
+              this.log('Meeting notes sent to webhook successfully', {
+                statusCode: webhookResult.statusCode
+              });
+            } else {
+              this.log('Failed to send meeting notes to webhook', webhookResult.error);
+            }
+          } else {
+            this.log('Failed to generate meeting notes', meetingNotesResult.error);
+          }
+        } catch (error) {
+          this.log('Error processing meeting notes and webhook', error.message);
+        }
+      } else {
+        this.log('No transcripts to process for meeting notes', {
+          hasSessionSummary: !!sessionSummary,
+          transcriptCount: sessionSummary?.transcripts?.length || 0
+        });
+      }
       
       // Notify renderer process
       this.notifyRenderer('voice-recording-stopped', {
