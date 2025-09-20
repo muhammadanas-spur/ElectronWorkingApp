@@ -17,8 +17,8 @@ class TopicAnalyzer extends EventEmitter {
       model: config.model || 'gpt-4o-mini',
       maxTokens: config.maxTokens || 150,
       temperature: config.temperature || 0.3,
-      analysisInterval: config.analysisInterval || 10000, // 10 seconds
-      minTranscriptsForAnalysis: config.minTranscriptsForAnalysis || 3,
+      analysisInterval: config.analysisInterval || 3000, // 3 seconds for faster response
+      minTranscriptsForAnalysis: config.minTranscriptsForAnalysis || 2, // Reduced from 3 to 2
       transcriptWindow: config.transcriptWindow || 20, // Number of recent transcripts to analyze
       topicChangeThreshold: config.topicChangeThreshold || 0.3, // Threshold for detecting topic changes
       outputFile: config.outputFile || './current_topic.txt',

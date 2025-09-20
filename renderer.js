@@ -771,7 +771,7 @@ class OverlayRenderer {
     this.showInsightsLoading();
     setTimeout(() => {
       this.hideInsightsLoading();
-    }, 500);
+    }, 200); // Reduced from 500ms to 200ms for faster feedback
   }
 
   /**
