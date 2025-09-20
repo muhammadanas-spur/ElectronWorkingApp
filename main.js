@@ -40,7 +40,7 @@ class OverlayApplication {
     this.voiceInitialized = false;
     
     // Knowledge base
-    this.knowledgeBase = null;
+    this.isKnowledgeBaseReady = false;
 
     this.setupEventHandlers();
   }
@@ -1054,41 +1054,50 @@ class OverlayApplication {
   }
 
   /**
-   * Load knowledge base from file
+   * Initialize knowledge base service (file search)
+   * Replaces the old MD file loading approach
    */
-  async loadKnowledgeBase() {
+  async initializeKnowledgeBase() {
     try {
-      const knowledgeBasePath = path.join(__dirname, 'knowledgebase.md');
-      this.knowledgeBase = await fs.readFile(knowledgeBasePath, 'utf8');
-      logger.info('Knowledge base loaded successfully');
+      // The FileSearchService is now initialized within TopicAnalyzer
+      // during its initialization process, so we just log that it's ready
+      logger.info('Knowledge base service (file search) ready - integrated with TopicAnalyzer');
+      this.isKnowledgeBaseReady = true;
     } catch (error) {
-      logger.error('Failed to load knowledge base:', error);
-      this.knowledgeBase = 'Knowledge base not available.';
+      logger.error('Failed to initialize knowledge base service:', error);
+      this.isKnowledgeBaseReady = false;
     }
   }
 
   /**
-   * Query knowledge base with customer question
+   * Query knowledge base with customer question using file search
    */
   async queryKnowledgeBase(question, context) {
     try {
-      // Load knowledge base if not already loaded
-      if (!this.knowledgeBase) {
-        await this.loadKnowledgeBase();
+      // Initialize knowledge base service if not ready
+      if (!this.isKnowledgeBaseReady) {
+        await this.initializeKnowledgeBase();
       }
 
       if (!this.voiceManager || !this.voiceManager.topicAnalyzer) {
         throw new Error('Topic analyzer not available');
       }
 
-      // Use the topic analyzer to query the knowledge base
-      const answer = await this.voiceManager.topicAnalyzer.queryKnowledgeBase(
+      // Use the topic analyzer's new file search functionality
+      const result = await this.voiceManager.topicAnalyzer.queryKnowledgeBase(
         question,
-        context || '',
-        this.knowledgeBase
+        context || ''
       );
 
-      return answer;
+      // Return the answer text for backward compatibility
+      // but log the full result for debugging
+      logger.info('Knowledge base query completed', {
+        answerLength: result.answer ? result.answer.length : 0,
+        citationCount: result.citations ? result.citations.length : 0,
+        hasError: !!result.error
+      });
+
+      return result.answer || 'Unable to find relevant information in the knowledge base.';
     } catch (error) {
       logger.error('Error querying knowledge base:', error);
       throw new Error('Failed to query knowledge base');

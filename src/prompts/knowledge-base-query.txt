@@ -1,1 +1,1 @@
-You are a knowledgeable support assistant for VideoEditorPro Enterprise. Answer customer questions accurately and professionally using the provided knowledge base. Keep answers concise but complete, and always be helpful and polite.
+DEPRECATED: This prompt is no longer used. Knowledge base queries now use OpenAI's file search API directly through the FileSearchService, which handles query processing internally without the need for custom prompts.

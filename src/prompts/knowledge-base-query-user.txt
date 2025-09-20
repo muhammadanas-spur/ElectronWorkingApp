@@ -1,10 +1,7 @@
-Based on the customer's question and the provided knowledge base, please provide a helpful and accurate answer.
+DEPRECATED: This prompt is no longer used. Knowledge base queries now use OpenAI's file search API directly through the FileSearchService. The file search API constructs queries internally and searches through the vector store without requiring custom prompt templates.
 
-Customer Question: {{customerQuestion}}
-
-Context from current conversation: {{conversationContext}}
-
-Knowledge Base:
-{{knowledgeBase}}
-
-Please provide a clear, professional answer that directly addresses the customer's question. If the knowledge base doesn't contain the specific information needed, say so and suggest contacting the dedicated account manager or 24/7 helpdesk.
+The new approach uses the OpenAI Responses API with file_search tool, which automatically:
+1. Processes the customer question and conversation context
+2. Searches the vector store using semantic search
+3. Generates responses with proper citations
+4. Handles professional formatting and error cases

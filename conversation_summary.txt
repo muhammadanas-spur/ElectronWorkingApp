@@ -1,12 +1,17 @@
 CUSTOMER SUPPORT SESSION SUMMARY
-Date: 9/20/2025, 1:19:56 PM
+Date: 9/20/2025, 2:17:44 PM
 Duration: 0 minutes
 Customer: Customer
 Priority Level: NORMAL
 Urgency: NORMAL
 Sentiment: NEUTRAL
-Technical Complexity: LOW
+Technical Complexity: HIGH
 
 QUESTIONS ASKED:
-1. Okay, So what kind of question do you have? (Me)
+1. Hello, how are you? How can I help you today? (Me)
+2. I want to know more about what does your company do. (Other)
+3. OK, sure. And who are your ideal customers? (Me)
+4. And who are your ideal customers? (Other)
+5. What happens when system integration is allowed? (Me)
+6. What happens when is integration is allowed? (Other)
 

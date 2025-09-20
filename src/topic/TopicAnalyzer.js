@@ -4,6 +4,7 @@ const path = require('path');
 const OpenAI = require('openai');
 const PromptManager = require('../prompts/PromptManager');
 const ConversationSummary = require('../conversation/ConversationSummary');
+const FileSearchService = require('../knowledge/FileSearchService');
 
 /**
  * TopicAnalyzer - Analyzes conversation transcripts to identify and track current topics
@@ -55,6 +56,12 @@ class TopicAnalyzer extends EventEmitter {
       debug: this.config.debug
     });
     
+    // Initialize file search service for knowledge base queries
+    this.fileSearchService = new FileSearchService({
+      model: this.config.model,
+      debug: this.config.debug
+    });
+    
     this.log('TopicAnalyzer initialized', { 
       model: this.config.model,
       outputFile: this.config.outputFile,
@@ -73,6 +80,9 @@ class TopicAnalyzer extends EventEmitter {
       
       // Initialize conversation summary
       await this.conversationSummary.initialize();
+      
+      // Initialize file search service
+      await this.fileSearchService.initialize();
       
       // Initialize with empty topic
       await this.updateTopicFile('No conversation topic detected yet.');
@@ -463,51 +473,57 @@ Last analysis: ${timestamp}
   }
 
   /**
-   * Query knowledge base with customer question
+   * Query knowledge base with customer question using OpenAI file search
    */
-  async queryKnowledgeBase(customerQuestion, conversationContext, knowledgeBase) {
+  async queryKnowledgeBase(customerQuestion, conversationContext) {
     try {
-      this.log('Querying knowledge base', { question: customerQuestion.substring(0, 50) + '...' });
-
-      // Get prompts from PromptManager
-      const prompts = await this.promptManager.getKnowledgeBaseQueryPrompts(
-        customerQuestion,
-        conversationContext,
-        knowledgeBase
-      );
-
-      const response = await this.openai.chat.completions.create({
-        model: this.config.model,
-        messages: [
-          {
-            role: 'system',
-            content: prompts.system
-          },
-          {
-            role: 'user',
-            content: prompts.user
-          }
-        ],
-        max_tokens: 300,
-        temperature: 0.3
+      this.log('Querying knowledge base with file search', { 
+        question: customerQuestion.substring(0, 50) + '...',
+        contextLength: conversationContext ? conversationContext.length : 0
       });
 
-      const answer = response.choices[0]?.message?.content?.trim();
-      
-      if (!answer) {
-        throw new Error('No answer generated');
-      }
+      // Use the file search service to query the vector store
+      const searchResult = await this.fileSearchService.searchKnowledgeBase(
+        customerQuestion,
+        conversationContext || ''
+      );
 
-      this.log('Knowledge base answer generated', { 
-        answerLength: answer.length,
+      this.log('Knowledge base search completed', { 
+        answerLength: searchResult.answer ? searchResult.answer.length : 0,
+        citationCount: searchResult.citations.length,
         question: customerQuestion.substring(0, 30) + '...'
       });
 
-      return answer;
+      // Return both the answer and metadata for potential future use
+      return {
+        answer: searchResult.answer,
+        citations: searchResult.citations,
+        searchResults: searchResult.searchResults,
+        fileSearchCallId: searchResult.fileSearchCallId,
+        timestamp: searchResult.timestamp
+      };
     } catch (error) {
-      this.log('Error querying knowledge base', error);
-      throw error;
+      this.log('Error querying knowledge base with file search', error);
+      
+      // Return a fallback error response
+      return {
+        answer: 'I apologize, but I encountered an error while searching the knowledge base. Please contact our support team for assistance.',
+        citations: [],
+        searchResults: [],
+        fileSearchCallId: null,
+        timestamp: new Date().toISOString(),
+        error: error.message
+      };
     }
+  }
+
+  /**
+   * Legacy method compatibility - returns just the answer text
+   * This maintains backward compatibility with existing code
+   */
+  async queryKnowledgeBaseLegacy(customerQuestion, conversationContext, knowledgeBase) {
+    const result = await this.queryKnowledgeBase(customerQuestion, conversationContext);
+    return result.answer;
   }
 
   /**
