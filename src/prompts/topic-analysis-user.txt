@@ -9,8 +9,36 @@ Required JSON format (return only this, no other text):
 {
   "topic": "Brief main topic being discussed",
   "keyPoints": ["Key discussion point 1", "Key discussion point 2"],
-  "questionActions": ["Relevant question customer might ask based on conversation"],
+  "questionActions": ["Product features overview", "Pricing information", "Technical specifications"],
   "taskActions": ["Create Jira ticket for bug report", "Send follow-up email with documentation"]
 }
 
-NOTE: Only include taskActions if the conversation clearly indicates a need for creating tickets or sending emails. If no clear task is needed, return empty array for taskActions.
+IMPORTANT: questionActions should be ANSWER TOPICS (noun phrases) that address customer questions, not questions themselves. Examples:
+- If customer asks about pricing → "Pricing plans details"
+- If customer asks about features → "Available features overview" 
+- If customer has technical issues → "Technical troubleshooting steps"
+
+TASK ACTIONS - Think like an experienced support specialist:
+
+CREATE JIRA TICKET when:
+- Technical bugs or system errors reported
+- Feature requests or enhancement needs
+- Integration or API issues
+- Reproducible problems requiring development
+- Multiple related technical issues
+
+SCHEDULE FOLLOW-UP when:
+- Complex architectural discussions
+- Customer needs time to gather requirements
+- Multiple stakeholders need to be involved
+- Solution requires detailed planning
+- Customer expressed frustration (relationship management)
+- Training or onboarding discussions
+
+Examples:
+- "Create Jira ticket for login authentication bug"
+- "Schedule follow-up call to review integration requirements"
+- "Create Jira ticket for API rate limiting feature request"
+- "Schedule technical follow-up with customer's dev team"
+
+Only include taskActions when there's clear evidence in the conversation that warrants these actions.

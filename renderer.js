@@ -45,6 +45,7 @@ class OverlayRenderer {
       statusDot: document.getElementById('statusDot'),
       shortcutsTooltip: document.getElementById('shortcutsTooltip'),
       overlayContainer: document.getElementById('overlayContainer'),
+      container: document.body, // Add container reference for knowledge pane
       insightsPanel: document.getElementById('insightsPanel'),
       insightsToggle: document.getElementById('insightsToggle'),
       insightsContent: document.getElementById('insightsContent'),
@@ -64,6 +65,10 @@ class OverlayRenderer {
     this.currentInsights = null;
     this.dismissedActions = new Set();
     this.knowledgePaneVisible = false;
+    
+    // Initialize transcripts array for conversation context
+    this.transcripts = [];
+    this.currentKnowledgeAnswer = '';
   }
 
   setupEventListeners() {
@@ -574,6 +579,13 @@ class OverlayRenderer {
 
     window.electronAPI.onFinalTranscript((transcript) => {
       this.handleFinalTranscript(transcript);
+      
+      // Add to transcripts array for conversation context
+      this.transcripts.push(transcript);
+      // Keep only last 20 transcripts for context
+      if (this.transcripts.length > 20) {
+        this.transcripts.shift();
+      }
     });
 
     // Topic analysis events
@@ -771,7 +783,7 @@ class OverlayRenderer {
     this.showInsightsLoading();
     setTimeout(() => {
       this.hideInsightsLoading();
-    }, 200); // Reduced from 500ms to 200ms for faster feedback
+    }, 50); // Minimal delay for instant feedback
   }
 
   /**
@@ -871,16 +883,24 @@ class OverlayRenderer {
    * Handle question action click - show knowledge base answer
    */
   async handleQuestionClick(question) {
+    console.log('Question clicked:', question);
+    console.log('Current transcripts count:', this.transcripts.length);
+    
     this.showKnowledgePane();
     this.showKnowledgeLoading();
 
     try {
+      const context = this.getConversationContext();
+      console.log('Conversation context:', context);
+      
       // Request knowledge base answer from main process
-      const response = await window.electronAPI.queryKnowledgeBase(question, this.getConversationContext());
+      const response = await window.electronAPI.queryKnowledgeBase(question, context);
+      console.log('Knowledge base response received:', response);
+      
       this.showKnowledgeAnswer(response);
     } catch (error) {
       console.error('Error querying knowledge base:', error);
-      this.showKnowledgeError('Failed to get answer from knowledge base.');
+      this.showKnowledgeError(`Failed to get answer from knowledge base: ${error.message}`);
     }
   }
 
@@ -916,6 +936,10 @@ class OverlayRenderer {
    */
   getConversationContext() {
     // Get recent transcripts as context
+    if (!this.transcripts || this.transcripts.length === 0) {
+      return 'No recent conversation context available.';
+    }
+    
     const recentTranscripts = this.transcripts.slice(-5);
     return recentTranscripts.map(t => `${t.speaker}: ${t.text}`).join('\n');
   }
@@ -968,6 +992,32 @@ class OverlayRenderer {
       <div class="knowledge-answer">${answer}</div>
     `;
     this.currentKnowledgeAnswer = answer;
+  }
+
+  /**
+   * Show knowledge error
+   */
+  showKnowledgeError(error) {
+    this.elements.knowledgeContent.innerHTML = `
+      <div class="knowledge-error" style="color: #ef4444; padding: 20px; text-align: center;">
+        <i class="fas fa-exclamation-triangle" style="margin-bottom: 8px; font-size: 18px;"></i>
+        <div>${error}</div>
+        <div style="font-size: 11px; opacity: 0.7; margin-top: 8px;">Please try again or contact support.</div>
+      </div>
+    `;
+  }
+
+  /**
+   * Show knowledge error
+   */
+  showKnowledgeError(error) {
+    this.elements.knowledgeContent.innerHTML = `
+      <div class="knowledge-error" style="color: #ef4444; padding: 20px; text-align: center;">
+        <i class="fas fa-exclamation-triangle" style="margin-bottom: 8px; font-size: 18px;"></i>
+        <div>${error}</div>
+        <div style="font-size: 11px; opacity: 0.7; margin-top: 8px;">Please try again or contact support.</div>
+      </div>
+    `;
   }
 
   /**

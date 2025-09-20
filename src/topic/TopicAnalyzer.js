@@ -3,6 +3,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const OpenAI = require('openai');
 const PromptManager = require('../prompts/PromptManager');
+const ConversationSummary = require('../conversation/ConversationSummary');
 
 /**
  * TopicAnalyzer - Analyzes conversation transcripts to identify and track current topics
@@ -17,9 +18,9 @@ class TopicAnalyzer extends EventEmitter {
       model: config.model || 'gpt-4o-mini',
       maxTokens: config.maxTokens || 150,
       temperature: config.temperature || 0.3,
-      analysisInterval: config.analysisInterval || 3000, // 3 seconds for faster response
-      minTranscriptsForAnalysis: config.minTranscriptsForAnalysis || 2, // Reduced from 3 to 2
-      transcriptWindow: config.transcriptWindow || 20, // Number of recent transcripts to analyze
+      analysisInterval: config.analysisInterval || 1000, // 1 second for near real-time response
+      minTranscriptsForAnalysis: config.minTranscriptsForAnalysis || 1, // Start analysis after just 1 transcript
+      transcriptWindow: config.transcriptWindow || 10, // Reduced window for faster processing
       topicChangeThreshold: config.topicChangeThreshold || 0.3, // Threshold for detecting topic changes
       outputFile: config.outputFile || './current_topic.txt',
       debug: config.debug || false,
@@ -48,6 +49,12 @@ class TopicAnalyzer extends EventEmitter {
     // Initialize prompt manager
     this.promptManager = new PromptManager();
     
+    // Initialize conversation summary
+    this.conversationSummary = new ConversationSummary({
+      summaryFile: './conversation_summary.txt',
+      debug: this.config.debug
+    });
+    
     this.log('TopicAnalyzer initialized', { 
       model: this.config.model,
       outputFile: this.config.outputFile,
@@ -63,6 +70,9 @@ class TopicAnalyzer extends EventEmitter {
       // Ensure output directory exists
       const outputDir = path.dirname(this.config.outputFile);
       await fs.mkdir(outputDir, { recursive: true });
+      
+      // Initialize conversation summary
+      await this.conversationSummary.initialize();
       
       // Initialize with empty topic
       await this.updateTopicFile('No conversation topic detected yet.');
@@ -134,6 +144,17 @@ class TopicAnalyzer extends EventEmitter {
       const insights = await this.generateTopicDescription(conversationText);
       
       if (insights) {
+        // Update conversation summary with new insights
+        await this.conversationSummary.updateSummary(recentTranscripts, insights);
+        
+        // Get intelligent task recommendations from conversation summary
+        const intelligentTasks = this.conversationSummary.getTaskRecommendations();
+        
+        // Merge AI-generated tasks with intelligent recommendations
+        const enhancedTaskActions = [...insights.taskActions, ...intelligentTasks]
+          .filter((task, index, arr) => arr.indexOf(task) === index) // Remove duplicates
+          .slice(0, 3); // Limit to 3 tasks
+        
         // Check if topic has significantly changed
         const hasTopicChanged = await this.hasTopicChanged(insights.topic);
         
@@ -142,7 +163,7 @@ class TopicAnalyzer extends EventEmitter {
             topic: insights.topic,
             keyPoints: insights.keyPoints,
             questionActions: insights.questionActions,
-            taskActions: insights.taskActions,
+            taskActions: enhancedTaskActions,
             timestamp: Date.now(),
             confidence: 0.8,
             transcriptCount: transcripts.length
@@ -259,7 +280,7 @@ class TopicAnalyzer extends EventEmitter {
         insights = {
           topic: content.length > 100 ? content.substring(0, 100) + '...' : content,
           keyPoints: [`Discussion about: ${content.substring(0, 80)}...`],
-          questionActions: ['What features are available?', 'How do I get support?'],
+          questionActions: ['Available features overview', 'Support options information'],
           taskActions: []
         };
       }
@@ -494,6 +515,12 @@ Last analysis: ${timestamp}
    */
   async destroy() {
     this.stopAnalysis();
+    
+    // Cleanup conversation summary  
+    if (this.conversationSummary) {
+      await this.conversationSummary.destroy();
+    }
+    
     this.removeAllListeners();
     this.log('TopicAnalyzer destroyed');
   }

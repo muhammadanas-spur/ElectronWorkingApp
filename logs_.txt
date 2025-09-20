@@ -1,0 +1,1015 @@
+VoiceManager: Handling interim result - "i have deleted my project mistakenly how can" from system
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:38.297Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 209 }
+≡ƒöè VoiceManager: Processing SYSTEM audio data - should be tagged as "Other"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from system -> Speaker: "Other"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting system-audio event with 8192 bytes for speaker "Other"
+≡ƒöè VoiceManager: Received SYSTEM audio data - 8192 bytes
+≡ƒöè VoiceManager: Speech service stream active for system: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for system
+≡ƒöè VoiceManager: Sent system audio data to speech service, success: true
+[2025-09-19T22:41:38.303Z] AudioCaptureManager: Processed system audio data { bufferSize: 210 }
+SpeechRecognitionService: Recognizing event for system, reason: 2
+SpeechRecognitionService: Interim result [system]: "i have deleted my project mistakenly how can i fix"
+VoiceManager: Handling interim result - "i have deleted my project mistakenly how can i fix" from system
+SpeechRecognitionService: Recognizing event for microphone, reason: 2
+SpeechRecognitionService: Interim result [microphone]: "i have deleted my project mistakenly how can i fix"
+VoiceManager: Handling interim result - "i have deleted my project mistakenly how can i fix" from microphone
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:38.554Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 211 }
+≡ƒöè VoiceManager: Processing SYSTEM audio data - should be tagged as "Other"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from system -> Speaker: "Other"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting system-audio event with 8192 bytes for speaker "Other"
+≡ƒöè VoiceManager: Received SYSTEM audio data - 8192 bytes
+≡ƒöè VoiceManager: Speech service stream active for system: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for system
+≡ƒöè VoiceManager: Sent system audio data to speech service, success: true
+[2025-09-19T22:41:38.560Z] AudioCaptureManager: Processed system audio data { bufferSize: 212 }
+SpeechRecognitionService: Recognizing event for system, reason: 2
+SpeechRecognitionService: Interim result [system]: "i have deleted my project mistakenly how can i fix that"
+VoiceManager: Handling interim result - "i have deleted my project mistakenly how can i fix that" from system
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:38.807Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 213 }
+SpeechRecognitionService: Recognizing event for microphone, reason: 2
+SpeechRecognitionService: Interim result [microphone]: "i have deleted my project mistakenly how can i fix that"
+VoiceManager: Handling interim result - "i have deleted my project mistakenly how can i fix that" from microphone
+SpeechRecognitionService: Recognized event for system, reason: 3
+SpeechRecognitionService: Final result [system]: "I have deleted my project mistakenly. How can I fix that?"
+VoiceManager: Handling final result - "I have deleted my project mistakenly. How can I fix that?" from system
+TranscriptManager: addFinalTranscript called - streamId: system, text: "I have deleted my project mistakenly. How can I fix that?", confidence: 0     
+TranscriptManager: Created transcript object: {
+  id: 'transcript_1758321698887_1upbhl9q',
+  streamId: 'system',
+  speaker: 'Other',
+  text: 'I have deleted my project mistakenly. How can I fix that?',
+  taggedText: '[Other] I have deleted my project mistakenly. How can I fix that?',
+  confidence: 0,
+  timestamp: 1758321698887,
+  type: 'final',
+  sessionId: 'session_1758321663408_nyge0i5f73g'
+}
+TranscriptManager: Added to transcripts array, total count: 8
+TranscriptManager: Added to current session, session transcript count: 8
+[2025-09-19T22:41:38.888Z] TranscriptManager: Final transcript [Other]: I have deleted my project mistakenly. How can I fix that?
+[2025-09-19T22:41:38.889Z] TopicAnalyzer: Analyzing 8 transcripts for topic detection
+VoiceManager: Added final transcript to manager
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:39.065Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 214 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:39.315Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 215 }
+SpeechRecognitionService: Recognized event for microphone, reason: 3
+SpeechRecognitionService: Final result [microphone]: "I have deleted my project mistakenly. How can I fix that?"
+VoiceManager: Handling final result - "I have deleted my project mistakenly. How can I fix that?" from microphone
+TranscriptManager: addFinalTranscript called - streamId: microphone, text: "I have deleted my project mistakenly. How can I fix that?", confidence: 0 
+TranscriptManager: Created transcript object: {
+  id: 'transcript_1758321699322_dazk8odx',
+  streamId: 'microphone',
+  speaker: 'Me',
+  text: 'I have deleted my project mistakenly. How can I fix that?',
+  taggedText: '[Me] I have deleted my project mistakenly. How can I fix that?',
+  confidence: 0,
+  timestamp: 1758321699321,
+  type: 'final',
+  sessionId: 'session_1758321663408_nyge0i5f73g'
+}
+TranscriptManager: Suppressing microphone transcript - system audio is active
+TranscriptManager: Filtered duplicate transcript from Me: "I have deleted my project mistakenly. How can I fix that?"
+[2025-09-19T22:41:39.325Z] TranscriptManager: Filtered duplicate transcript [Me]: I have deleted my project mistakenly. How can I fix that?
+VoiceManager: Added final transcript to manager
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:39.582Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 216 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:39.849Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 217 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:40.090Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 218 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:40.350Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 219 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:40.605Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 220 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:40.865Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 221 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:41.125Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 222 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:41.374Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 223 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:41.627Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 224 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:41.883Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 225 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:42.139Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 226 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:42.437Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 227 }
+[2025-09-19T22:41:42.640Z] TopicAnalyzer: Successfully parsed JSON insights 
+[2025-09-19T22:41:42.641Z] TopicAnalyzer: Generated structured insights {
+  topic: 'Accidental project deletion and recovery...',
+  keyPointsCount: 2,
+  questionActionsCount: 2,
+  taskActionsCount: 0
+}
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:42.663Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 228 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:42.916Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 229 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:43.165Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 230 }
+[2025-09-19T22:41:43.406Z] TopicAnalyzer: Topic change analysis {
+  result: 'yes',
+  hasChanged: true,
+  previous: 'Fixing accidental project dictation in VideoEditor...',
+  new: 'Accidental project deletion and recovery...'
+}
+[2025-09-19T22:41:43.418Z] TopicAnalyzer: Topic file updated { file: './current_topic.txt', length: 309 }
+[2025-09-19T22:41:43.419Z] VoiceManager: Topic file updated ./current_topic.txt
+[2025-09-19T22:41:43.419Z] TopicAnalyzer: Insights updated {
+  topic: 'Accidental project deletion and recovery...',
+  keyPoints: 2,
+  questionActions: 2,
+  taskActions: 0,
+  hasChanged: true
+}
+[2025-09-19T22:41:43.420Z] VoiceManager: Conversation topic updated Accidental project deletion and recovery...
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:43.433Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 231 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:43.692Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 232 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:43.941Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 233 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:44.198Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 234 }
+info: Window auto-resized to 824x400 {"service":"overlay-assistant","timestamp":"2025-09-19T22:41:44.214Z"}
+[2025-09-19T22:41:44.318Z] TopicAnalyzer: Analyzing 8 transcripts for topic detection 
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:44.453Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 235 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:44.716Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 236 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:44.971Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 237 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:45.356Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 238 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:45.481Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 239 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:45.732Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 240 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:45.993Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 241 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:46.257Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 242 }
+[2025-09-19T22:41:46.449Z] TopicAnalyzer: Successfully parsed JSON insights 
+[2025-09-19T22:41:46.449Z] TopicAnalyzer: Generated structured insights {
+  topic: 'Fixing accidental project deletion in VideoEditorP...',
+  keyPointsCount: 2,
+  questionActionsCount: 2,
+  taskActionsCount: 0
+}
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:46.504Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 243 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:46.765Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 244 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:47.015Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 245 }
+[2025-09-19T22:41:47.142Z] TopicAnalyzer: Topic change analysis {
+  result: 'no',
+  hasChanged: false,
+  previous: 'Accidental project deletion and recovery...',
+  new: 'Fixing accidental project deletion in VideoEditorP...'
+}
+[2025-09-19T22:41:47.142Z] TopicAnalyzer: Topic has not significantly changed, keeping current insights 
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:47.276Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 246 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:47.539Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 247 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:47.792Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 248 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:48.052Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 249 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:48.354Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 250 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:48.563Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 251 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:48.832Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 252 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:49.084Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 253 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:49.344Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 254 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:49.592Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 255 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:49.860Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 256 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:50.129Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 257 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:50.374Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 258 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:50.636Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 259 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:50.884Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 260 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:51.139Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 261 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:51.451Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 262 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:51.703Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 263 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:51.962Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 264 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:52.220Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 265 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:52.478Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 266 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:52.733Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 267 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:52.984Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 268 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:53.245Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 269 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:53.500Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 270 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:53.772Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 271 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:54.031Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 272 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:54.357Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 273 }
+[2025-09-19T22:41:54.358Z] TopicAnalyzer: Analyzing 8 transcripts for topic detection
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:54.538Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 274 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:54.783Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 275 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:55.045Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 276 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:55.308Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 277 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:55.558Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 278 }
+SpeechRecognitionService: Recognizing event for microphone, reason: 2
+SpeechRecognitionService: Interim result [microphone]: "OK i will"
+VoiceManager: Handling interim result - "OK i will" from microphone
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:55.819Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 279 }
+SpeechRecognitionService: Recognizing event for microphone, reason: 2
+SpeechRecognitionService: Interim result [microphone]: "OK i will let you know right"
+VoiceManager: Handling interim result - "OK i will let you know right" from microphone
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:56.069Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 280 }
+SpeechRecognitionService: Recognizing event for microphone, reason: 2
+SpeechRecognitionService: Interim result [microphone]: "OK i will let you know right away"
+VoiceManager: Handling interim result - "OK i will let you know right away" from microphone
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:56.324Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 281 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:56.586Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 282 }
+[2025-09-19T22:41:56.589Z] TopicAnalyzer: Successfully parsed JSON insights
+[2025-09-19T22:41:56.589Z] TopicAnalyzer: Generated structured insights {
+  topic: 'Fixing accidental project deletion in VideoEditorP...',
+  keyPointsCount: 2,
+  questionActionsCount: 2,
+  taskActionsCount: 0
+}
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:56.835Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 283 }
+SpeechRecognitionService: Recognized event for microphone, reason: 3
+SpeechRecognitionService: Final result [microphone]: "OK. I will let you know right away."
+VoiceManager: Handling final result - "OK. I will let you know right away." from microphone
+TranscriptManager: addFinalTranscript called - streamId: microphone, text: "OK. I will let you know right away.", confidence: 0
+TranscriptManager: Created transcript object: {
+  id: 'transcript_1758321716858_1l5v4aed',
+  streamId: 'microphone',
+  speaker: 'Me',
+  text: 'OK. I will let you know right away.',
+  taggedText: '[Me] OK. I will let you know right away.',
+  confidence: 0,
+  timestamp: 1758321716858,
+  type: 'final',
+  sessionId: 'session_1758321663408_nyge0i5f73g'
+}
+TranscriptManager: Added to transcripts array, total count: 9
+TranscriptManager: Added to current session, session transcript count: 9
+[2025-09-19T22:41:56.861Z] TranscriptManager: Final transcript [Me]: OK. I will let you know right away.
+[2025-09-19T22:41:56.862Z] TopicAnalyzer: Analysis already in progress, skipping
+VoiceManager: Added final transcript to manager
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:57.092Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 284 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:57.374Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 285 }
+[2025-09-19T22:41:57.538Z] TopicAnalyzer: Topic change analysis {
+  result: 'no',
+  hasChanged: false,
+  previous: 'Accidental project deletion and recovery...',
+  new: 'Fixing accidental project deletion in VideoEditorP...'
+}
+[2025-09-19T22:41:57.539Z] TopicAnalyzer: Topic has not significantly changed, keeping current insights 
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:57.609Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 286 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:57.867Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 287 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:58.122Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 288 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:58.383Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 289 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:58.624Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 290 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:58.890Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 291 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:59.149Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 292 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:59.419Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 293 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:59.671Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 294 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:41:59.929Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 295 }
+≡ƒÄñ VoiceManager: Processing MICROPHONE audio data - should be tagged as "Me"
+≡ƒÄ╡ AudioCaptureManager: Received 4096 audio samples from microphone -> Speaker: "Me"
+AudioCaptureManager: Processing audio buffer - type: Array, length: 4096
+AudioCaptureManager: Converted array to Buffer - 8192 bytes
+≡ƒÄ╡ AudioCaptureManager: Emitting microphone-audio event with 8192 bytes for speaker "Me"
+VoiceManager: Received microphone audio data - 8192 bytes
+VoiceManager: Speech service stream active for microphone: true
+SpeechRecognitionService: Writing 8192 bytes to Azure push stream for microphone
+VoiceManager: Sent audio data to speech service, success: true
+[2025-09-19T22:42:00.188Z] AudioCaptureManager: Processed microphone audio data { bufferSize: 296 }
